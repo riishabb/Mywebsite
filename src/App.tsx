@@ -90,7 +90,7 @@ export default function App() {
             <h1>Financial clarity<br/>for <em>decisive</em> action.</h1>
             <p className="hero-intro">I’m Rishab Dahal, a Chartered Accountant working across audit, financial reporting, due diligence, valuation and advisory.</p>
             <div className="hero-actions"><button className="button primary" onClick={()=>goTo('experience')}>Explore my experience <Icon name="arrow"/></button><a className="button secondary" href="mailto:mail@carishabdahal.com.np">Start a conversation</a></div>
-            <div className="hero-proof"><div><strong>CA</strong><span>Qualified<br/>June 2026</span></div><div><strong>3 yrs</strong><span>Articleship<br/>completed</span></div><div><strong>6</strong><span>Core areas<br/>of expertise</span></div></div>
+            <div className="hero-proof"><div><strong>CA</strong><span>Qualified<br/>June 2026</span></div><div><strong>6</strong><span>Core areas<br/>of expertise</span></div></div>
           </div>
           <div className="portrait-stage"><div className="portrait-frame"><img src={rishabPhoto} alt="CA. Rishab Dahal"/></div><div className="portrait-card role-card"><span>Current role</span><strong>Assistant Manager</strong><small>K.J. & Associates</small></div><div className="portrait-card location-card"><Icon name="briefcase"/><span>Kathmandu<br/><strong>Nepal</strong></span></div><div className="gold-rule"/></div>
         </div>
