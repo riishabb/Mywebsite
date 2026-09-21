@@ -80,7 +80,7 @@ export default function App() {
       <nav className="desktop-nav" aria-label="Primary navigation">{NAV_LINKS.map(([id,label])=><button key={id} className={activeSection===id?'active':''} onClick={()=>goTo(id)}>{label}</button>)}</nav>
       <div className="header-actions"><button className="icon-button" onClick={()=>setTheme(theme==='light'?'dark':'light')} aria-label={`Switch to ${theme==='light'?'dark':'light'} theme`}><Icon name={theme==='light'?'moon':'sun'}/></button><button className="icon-button menu-button" onClick={()=>setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}><Icon name={menuOpen?'x':'menu'}/></button></div>
     </header>
-    <div className={`mobile-menu ${menuOpen?'open':''}`} aria-hidden={!menuOpen}><div className="mobile-menu-inner">{NAV_LINKS.map(([id,label],index)=><button key={id} onClick={()=>goTo(id)}><span>0{index+1}</span>{label}</button>)}<a href="mailto:mail@carishabdahal.com.np">mail@carishabdahal.com.np <Icon name="arrow"/></a></div></div>
+    <div className={`mobile-menu ${menuOpen?'open':''}`} aria-hidden={!menuOpen}><div className="mobile-menu-inner">{NAV_LINKS.map(([id,label],index)=><button key={id} onClick={()=>goTo(id)}><span>0{index+1}</span>{label}</button>)}<EmailChooser recipient="mail@carishabdahal.com.np" label="mail@carishabdahal.com.np" compact/></div></div>
 
     <main>
       <section id="home" className="hero">
@@ -90,7 +90,7 @@ export default function App() {
             <p className="eyebrow"><span/> Chartered Accountant · Nepal</p>
             <h1>Financial clarity<br/>for <em>decisive</em> action.</h1>
             <p className="hero-intro">I’m Rishab Dahal, a Chartered Accountant working across audit, financial reporting, due diligence, valuation and advisory.</p>
-            <div className="hero-actions"><button className="button primary" onClick={()=>goTo('experience')}>Explore my experience <Icon name="arrow"/></button><a className="button secondary" href="mailto:mail@carishabdahal.com.np">Start a conversation</a></div>
+            <div className="hero-actions"><button className="button primary" onClick={()=>goTo('experience')}>Explore my experience <Icon name="arrow"/></button><EmailChooser recipient="mail@carishabdahal.com.np" label="Start a conversation" buttonClass="button secondary"/></div>
             <div className="hero-proof"><div><strong>CA</strong><span>Qualified<br/>June 2026</span></div><div><strong>6</strong><span>Core areas<br/>of expertise</span></div></div>
           </div>
           <div className="portrait-stage"><div className="portrait-frame"><img src={rishabPhoto} alt="CA. Rishab Dahal"/></div><div className="portrait-card role-card"><span>Current role</span><strong>Assistant Manager</strong><small>K.J. & Associates</small></div><div className="portrait-card location-card"><Icon name="briefcase"/><span>Kathmandu<br/><strong>Nepal</strong></span></div><div className="gold-rule"/></div>
@@ -133,10 +133,28 @@ export default function App() {
 
       <section id="contact" className="section contact-section">
         <div className="contact-background" aria-hidden="true">RD</div>
-        <div className="contact-layout"><div className="contact-copy"><p className="eyebrow"><span/> Contact</p><h2>Let’s discuss the<br/><em>numbers that matter.</em></h2><p>For professional enquiries, collaborations or a conversation about an audit, reporting or advisory requirement, get in touch.</p><div className="contact-links"><a href="mailto:mail@carishabdahal.com.np"><span><Icon name="mail"/><small>Personal email</small><strong>mail@carishabdahal.com.np</strong></span><Icon name="arrow"/></a><a href="mailto:rishab@kjassociates.com.np"><span><Icon name="mail"/><small>Work email</small><strong>rishab@kjassociates.com.np</strong></span><Icon name="arrow"/></a><a href="tel:+9779802351674"><span><Icon name="phone"/><small>Phone 1</small><strong>+977 980 235 1674</strong></span><Icon name="arrow"/></a><a href="tel:+9779841846169"><span><Icon name="phone"/><small>Phone 2</small><strong>+977 984 184 6169</strong></span><Icon name="arrow"/></a><a href="https://www.linkedin.com/in/riishabb" target="_blank" rel="noreferrer"><span><Icon name="linkedin"/><small>LinkedIn</small><strong>linkedin.com/in/riishabb</strong></span><Icon name="external"/></a></div></div><ContactForm/></div>
+        <div className="contact-layout"><div className="contact-copy"><p className="eyebrow"><span/> Contact</p><h2>Let’s discuss the<br/><em>numbers that matter.</em></h2><p>For professional enquiries, collaborations or a conversation about an audit, reporting or advisory requirement, get in touch.</p><div className="contact-links"><EmailChooser recipient="mail@carishabdahal.com.np" label="mail@carishabdahal.com.np" detail="Personal email"/><EmailChooser recipient="rishab@kjassociates.com.np" label="rishab@kjassociates.com.np" detail="Work email"/><a href="tel:+9779802351674"><span><Icon name="phone"/><small>Phone 1</small><strong>+977 980 235 1674</strong></span><Icon name="arrow"/></a><a href="tel:+9779841846169"><span><Icon name="phone"/><small>Phone 2</small><strong>+977 984 184 6169</strong></span><Icon name="arrow"/></a><a href="https://www.linkedin.com/in/riishabb" target="_blank" rel="noreferrer"><span><Icon name="linkedin"/><small>LinkedIn</small><strong>linkedin.com/in/riishabb</strong></span><Icon name="external"/></a></div></div><ContactForm/></div>
       </section>
     </main>
     <footer><div className="footer-brand"><span className="brand-mark">RD</span><div><strong>CA. Rishab Dahal</strong><small>Kathmandu, Nepal</small></div></div><p>© {new Date().getFullYear()} Rishab Dahal. All rights reserved.</p><button onClick={()=>goTo('home')}>Back to top <span>↑</span></button></footer>
+  </div>
+}
+
+function EmailChooser({ recipient, label, detail, subject = '', body = '', compact = false, buttonClass = '' }: { recipient: string; label: string; detail?: string; subject?: string; body?: string; compact?: boolean; buttonClass?: string }) {
+  const [open, setOpen] = useState(false)
+  const query = `to=${encodeURIComponent(recipient)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  const options = [
+    ['Gmail', `https://mail.google.com/mail/?view=cm&fs=1&${query}`],
+    ['Outlook', `https://outlook.live.com/mail/0/deeplink/compose?${query}`],
+    ['Zoho Mail', `https://mail.zoho.com/zm/#compose?${query}`],
+  ]
+  return <div className={`email-picker ${compact ? 'compact' : ''} ${buttonClass ? 'button-picker' : ''}`}>
+    <button className={buttonClass || 'email-picker-trigger'} onClick={() => setOpen(!open)} aria-expanded={open}>
+      {detail && <span><Icon name="mail"/><small>{detail}</small><strong>{label}</strong></span>}
+      {!detail && label}
+      {detail ? <Icon name="arrow"/> : <Icon name="arrow"/>}
+    </button>
+    {open && <div className="email-picker-menu" role="menu">{options.map(([name, url]) => <a key={name} href={url} target="_blank" rel="noreferrer" role="menuitem" onClick={() => setOpen(false)}>{name}<Icon name="external" size={16}/></a>)}</div>}
   </div>
 }
 
@@ -144,6 +162,8 @@ function ContactForm() {
   const [form,setForm]=useState({name:'',email:'',subject:'',message:''})
   const [status,setStatus]=useState('')
   const update=(field:keyof typeof form,value:string)=>setForm(current=>({...current,[field]:value}))
-  const submit=(event:React.FormEvent)=>{event.preventDefault();const subject=encodeURIComponent(form.subject||`Website enquiry from ${form.name}`);const body=encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);window.location.href=`mailto:mail@carishabdahal.com.np,rishab@kjassociates.com.np?subject=${subject}&body=${body}`;setStatus('Your email app has been opened with the message ready to send.')}
-  return <form className="contact-form" onSubmit={submit}><div className="form-heading"><span>Send an enquiry</span><small>All fields are required</small></div><div className="field-row"><label><span>Name</span><input required autoComplete="name" value={form.name} onChange={e=>update('name',e.target.value)} placeholder="Your full name"/></label><label><span>Email</span><input required type="email" autoComplete="email" value={form.email} onChange={e=>update('email',e.target.value)} placeholder="you@company.com"/></label></div><label><span>Subject</span><input required value={form.subject} onChange={e=>update('subject',e.target.value)} placeholder="What would you like to discuss?"/></label><label><span>Message</span><textarea required rows={5} value={form.message} onChange={e=>update('message',e.target.value)} placeholder="Share a little context about your enquiry…"/></label><button className="button primary form-submit" type="submit">Prepare email <Icon name="arrow"/></button>{status&&<p className="form-status" role="status"><Icon name="check" size={16}/> {status}</p>}</form>
+  const submit=(event:React.FormEvent)=>{event.preventDefault();setStatus('Choose your preferred email app below to continue.')}
+  const subject = form.subject || `Website enquiry from ${form.name}`
+  const body = `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
+  return <form className="contact-form" onSubmit={submit}><div className="form-heading"><span>Send an enquiry</span><small>All fields are required</small></div><div className="field-row"><label><span>Name</span><input required autoComplete="name" value={form.name} onChange={e=>update('name',e.target.value)} placeholder="Your full name"/></label><label><span>Email</span><input required type="email" autoComplete="email" value={form.email} onChange={e=>update('email',e.target.value)} placeholder="you@company.com"/></label></div><label><span>Subject</span><input required value={form.subject} onChange={e=>update('subject',e.target.value)} placeholder="What would you like to discuss?"/></label><label><span>Message</span><textarea required rows={5} value={form.message} onChange={e=>update('message',e.target.value)} placeholder="Share a little context about your enquiry…"/></label><button className="button primary form-submit" type="submit">Choose email app <Icon name="arrow"/></button>{status&&<p className="form-status" role="status"><Icon name="check" size={16}/> {status}</p>}{status&&<EmailChooser recipient="mail@carishabdahal.com.np,rishab@kjassociates.com.np" label="Open your email app" detail={undefined} subject={subject} body={body}/>}</form>
 }
