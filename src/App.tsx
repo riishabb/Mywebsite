@@ -101,8 +101,7 @@ export default function App() {
       <section id="about" className="section about-section">
         <div className="section-index">01</div>
         <div className="section-heading about-heading"><p className="eyebrow"><span/> About</p><h2>Rigour in the detail.<br/><em>Perspective beyond it.</em></h2></div>
-        <div className="about-banner"><img src={rishabFormalPhoto} alt="CA. Rishab Dahal in traditional Nepali formal dress"/></div>
-        <div className="about-layout"><div className="about-lead"><p>I bring structured analysis and practical judgment to complex financial questions.</p></div><div className="about-body">
+        <div className="about-layout"><div className="about-lead"><div className="about-portrait"><img src={rishabFormalPhoto} alt="CA. Rishab Dahal in traditional Nepali formal dress"/></div><p>I bring structured analysis and practical judgment to complex financial questions.</p></div><div className="about-body">
           <p>I’m CA. Rishab Dahal, a Chartered Accountant and Assistant Manager at K.J. &amp; Associates. I have practical experience in statutory and internal audits, financial reporting, regulatory compliance, mergers and acquisitions, business valuation, and assurance engagements across banking, insurance, microfinance, hydropower, government institutions, and other corporate sectors.</p>
           <p>I am committed to professional integrity, continuous learning, and delivering practical solutions that strengthen financial discipline and support informed business decisions.</p>
           <div className="principles"><div><Icon name="shield"/><span><strong>Integrity</strong>Objective, evidence-led work</span></div><div><Icon name="check"/><span><strong>Precision</strong>Careful analysis and reporting</span></div><div><Icon name="chart"/><span><strong>Commercial insight</strong>Advice grounded in context</span></div></div>
