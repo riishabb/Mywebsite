@@ -1,40 +1,59 @@
-const header = document.querySelector('.site-header');
-const menuBtn = document.querySelector('.menu-btn');
-const nav = document.querySelector('.site-nav');
-const navLinks = [...document.querySelectorAll('.site-nav a')];
+const tabButtons = [...document.querySelectorAll(".tab-btn")];
+const tabPanels = [...document.querySelectorAll(".tab-panel")];
+const jumpButtons = [...document.querySelectorAll(".tab-jump, [data-tab-link]")];
+const menuToggle = document.getElementById("menuToggle");
+const tabs = document.getElementById("tabs");
 
-const setHeader = () => header.classList.toggle('scrolled', window.scrollY > 16);
-setHeader();
-window.addEventListener('scroll', setHeader, { passive: true });
+function validTab(name) {
+  return tabPanels.some(panel => panel.dataset.panel === name);
+}
 
-menuBtn?.addEventListener('click', () => {
-  const open = menuBtn.getAttribute('aria-expanded') === 'true';
-  menuBtn.setAttribute('aria-expanded', String(!open));
-  nav.classList.toggle('open', !open);
+function activateTab(name, updateHash = true) {
+  const target = validTab(name) ? name : "home";
+
+  tabButtons.forEach(btn => {
+    const active = btn.dataset.tab === target;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
+  });
+
+  tabPanels.forEach(panel => {
+    const active = panel.dataset.panel === target;
+    panel.classList.toggle("active", active);
+    panel.setAttribute("aria-hidden", active ? "false" : "true");
+    if (active) panel.scrollTop = 0;
+  });
+
+  if (updateHash) {
+    history.replaceState(null, "", `#${target}`);
+  }
+
+  tabs.classList.remove("open");
+  menuToggle?.setAttribute("aria-expanded", "false");
+}
+
+tabButtons.forEach(btn => {
+  btn.addEventListener("click", () => activateTab(btn.dataset.tab));
 });
-navLinks.forEach(link => link.addEventListener('click', () => {
-  nav.classList.remove('open');
-  menuBtn?.setAttribute('aria-expanded', 'false');
-}));
 
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const delay = entry.target.dataset.delay || 0;
-      entry.target.style.setProperty('--delay', `${delay}ms`);
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+jumpButtons.forEach(control => {
+  control.addEventListener("click", event => {
+    const target = control.dataset.tab || control.dataset.tabLink;
+    if (target) {
+      event.preventDefault();
+      activateTab(target);
     }
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -30px' });
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+});
 
-const sections = [...document.querySelectorAll('main section[id]')];
-const activeObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
-    }
-  });
-}, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
-sections.forEach(section => activeObserver.observe(section));
+menuToggle?.addEventListener("click", () => {
+  const open = tabs.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(open));
+});
+
+window.addEventListener("hashchange", () => {
+  activateTab(location.hash.replace("#", ""), false);
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+activateTab(location.hash.replace("#", "") || "home", false);

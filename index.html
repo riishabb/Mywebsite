@@ -1,179 +1,309 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Professional profile of CA. Rishab Dahal — Chartered Accountant with experience in audit, financial reporting, valuation, banking, risk and advisory assignments." />
-  <meta name="theme-color" content="#0d2235" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Professional profile of CA. Rishab Dahal — Chartered Accountant with experience across audit, assurance, financial reporting, internal control and transaction advisory." />
+  <meta name="theme-color" content="#536b5d" />
   <title>CA. Rishab Dahal | Chartered Accountant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="page-noise" aria-hidden="true"></div>
-  <header class="site-header" id="top">
-    <div class="container nav-wrap">
-      <a class="brand" href="#top" aria-label="CA. Rishab Dahal home">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="#home" data-tab-link="home" aria-label="Rishab Dahal home">
         <span class="brand-mark">RD</span>
-        <span class="brand-text">CA. Rishab Dahal</span>
+        <span class="brand-copy">
+          <strong>CA. Rishab Dahal</strong>
+          <small>Chartered Accountant</small>
+        </span>
       </a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
-      <nav id="site-nav" class="site-nav" aria-label="Main navigation">
-        <a href="#about">About</a>
-        <a href="#expertise">Experience</a>
-        <a href="#career">Career</a>
-        <a href="#qualifications">Qualifications</a>
-        <a href="#insights">Insights</a>
-        <a href="#contact">Contact</a>
+
+      <nav class="tabs" id="tabs" aria-label="Primary navigation">
+        <button class="tab-btn active" data-tab="home">Home</button>
+        <button class="tab-btn" data-tab="about">About</button>
+        <button class="tab-btn" data-tab="experience">Experience</button>
+        <button class="tab-btn" data-tab="focus">Professional Focus</button>
+        <button class="tab-btn" data-tab="qualifications">Qualifications</button>
+        <button class="tab-btn" data-tab="insights">Insights</button>
+        <button class="tab-btn" data-tab="contact">Contact</button>
       </nav>
-    </div>
-  </header>
+    </header>
 
-  <main>
-    <section class="hero section-pad">
-      <div class="container hero-grid">
-        <div class="hero-copy reveal">
-          <p class="eyebrow">Chartered Accountant</p>
+    <main class="app-main">
+      <aside class="profile-rail">
+        <div class="profile-card">
+          <div class="monogram" aria-hidden="true">RD</div>
+          <p class="eyebrow">Professional Profile</p>
           <h1>CA. Rishab Dahal</h1>
-          <p class="hero-role">Audit <span>•</span> Financial Reporting <span>•</span> Valuation <span>•</span> Advisory</p>
-          <p class="hero-summary">Professional profile covering experience in audit, banking and financial institutions, financial reporting, valuation, mergers &amp; acquisitions, risk, compliance and taxation.</p>
-          <div class="hero-actions" aria-label="Profile navigation">
-            <a class="btn btn-primary" href="#about">View Profile</a>
-            <a class="btn btn-ghost" href="#contact">Contact Details</a>
-          </div>
-          <div class="hero-meta">
-            <div><span class="meta-label">Current role</span><strong>Assistant Manager</strong><small>K.J. &amp; Associates, Chartered Accountants</small></div>
-            <div><span class="meta-label">Based in</span><strong>Nepal</strong><small>Professional practice &amp; advisory environment</small></div>
-          </div>
+          <p class="role">Chartered Accountant</p>
+          <p class="location">Nepal</p>
+          <div class="rail-divider"></div>
+          <p class="rail-copy">
+            Audit, financial reporting, internal control, transaction advisory and professional research.
+          </p>
+          <a class="primary-btn" href="#contact" data-tab-link="contact">Contact</a>
         </div>
-        <div class="portrait-shell reveal" data-delay="120">
-          <div class="portrait-frame">
-            <img src="assets/rishab-dahal-portrait.png" alt="CA. Rishab Dahal in a professional suit" loading="eager" />
-          </div>
-          <div class="portrait-note">Professional Profile</div>
-        </div>
-      </div>
-      <div class="scroll-cue" aria-hidden="true"><span></span></div>
-    </section>
+      </aside>
 
-    <section id="about" class="section-pad section-ivory">
-      <div class="container split-grid">
-        <div class="section-heading reveal">
-          <p class="eyebrow">About</p>
-          <h2>Professional background</h2>
-        </div>
-        <div class="prose reveal" data-delay="80">
-          <p>I am a Chartered Accountant with practical experience across internal audit, statutory audit, financial reporting, valuation, banking and financial institutions, risk and compliance, taxation, and transaction-related assignments.</p>
-          <p>My professional work has included assignments across banking and financial institutions, microfinance, insurance, capital markets, government entities, hydropower, cooperatives and other corporate sectors.</p>
-          <p>This website is maintained as a factual professional profile and a place to share accounting, audit, finance and regulatory insights.</p>
-        </div>
-      </div>
-    </section>
+      <section class="content-stage" id="contentStage">
+        <section class="tab-panel active" id="home" data-panel="home" aria-labelledby="home-tab">
+          <div class="hero">
+            <p class="eyebrow">Chartered Accountant • Nepal</p>
+            <h2>Professional work grounded in analysis, evidence and clear communication.</h2>
+            <p class="hero-copy">
+              I work across audit, assurance, financial reporting, internal control review, due diligence,
+              valuation-related assignments and financial analysis.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-btn tab-jump" data-tab="about">View Profile</button>
+              <button class="secondary-btn tab-jump" data-tab="experience">Experience</button>
+            </div>
+          </div>
 
-    <section id="expertise" class="section-pad section-navy">
-      <div class="container">
-        <div class="section-heading section-heading-light reveal">
-          <p class="eyebrow">Areas of Experience</p>
-          <h2>Professional work across core financial disciplines</h2>
-          <p>Areas below describe the nature of assignments handled and professional exposure.</p>
-        </div>
-        <div class="expertise-grid">
-          <article class="expertise-card reveal"><span>01</span><h3>Internal Audit</h3><p>Risk-based reviews of processes, controls, compliance and operational practices.</p></article>
-          <article class="expertise-card reveal" data-delay="50"><span>02</span><h3>Statutory Audit</h3><p>Audit planning, fieldwork, financial statement review and reporting support.</p></article>
-          <article class="expertise-card reveal" data-delay="100"><span>03</span><h3>Financial Reporting</h3><p>NFRS/NAS-based accounting analysis, presentation and financial statement review.</p></article>
-          <article class="expertise-card reveal" data-delay="150"><span>04</span><h3>Valuation</h3><p>Financial modelling and valuation work for corporate and transaction contexts.</p></article>
-          <article class="expertise-card reveal"><span>05</span><h3>Mergers &amp; Acquisitions</h3><p>Due diligence, financial analysis and valuation support for merger-related assignments.</p></article>
-          <article class="expertise-card reveal" data-delay="50"><span>06</span><h3>Banking &amp; Finance</h3><p>Credit, treasury, trade operations, remittance and branch-level audit exposure.</p></article>
-          <article class="expertise-card reveal" data-delay="100"><span>07</span><h3>Risk &amp; Compliance</h3><p>Regulatory criteria review, control assessment and compliance-focused analysis.</p></article>
-          <article class="expertise-card reveal" data-delay="150"><span>08</span><h3>Taxation</h3><p>Tax review and related professional analysis within assignment requirements.</p></article>
-        </div>
-      </div>
-    </section>
+          <div class="stat-grid">
+            <article class="stat-card">
+              <span class="stat-number">CA</span>
+              <span class="stat-label">ICAN-qualified</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-number">Audit</span>
+              <span class="stat-label">Internal & statutory</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-number">M&A</span>
+              <span class="stat-label">Due diligence & valuation exposure</span>
+            </article>
+          </div>
 
-    <section id="career" class="section-pad section-paper">
-      <div class="container">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Career</p>
-          <h2>Professional experience</h2>
-        </div>
-        <div class="timeline">
-          <article class="timeline-item reveal">
-            <div class="timeline-date">Aug 2026 — Present</div>
-            <div class="timeline-body"><h3>Assistant Manager</h3><p class="org">K.J. &amp; Associates, Chartered Accountants</p><p>Engaged in audit, internal control review, financial reporting, due diligence, valuation and advisory assignments.</p></div>
+          <div class="notice-card">
+            <strong>Purpose of this website</strong>
+            <p>
+              This website is an informational professional profile. It is not intended to solicit professional work,
+              guarantee outcomes, or make claims of professional superiority.
+            </p>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="about" data-panel="about">
+          <div class="section-heading">
+            <p class="eyebrow">About</p>
+            <h2>Professional background</h2>
+          </div>
+
+          <div class="split-grid">
+            <article class="content-card">
+              <h3>Profile</h3>
+              <p>
+                I am a Chartered Accountant with practical exposure to internal audit, statutory audit, financial
+                reporting, due diligence, valuation-related work, internal control evaluation and regulatory research.
+              </p>
+              <p>
+                My work has involved financial institutions, public-sector entities, insurance, microfinance,
+                cooperatives, hydropower and other corporate assignments. I focus on structured analysis,
+                documentation, professional standards and clear reporting.
+              </p>
+            </article>
+
+            <article class="content-card">
+              <h3>Current role</h3>
+              <dl class="detail-list">
+                <div><dt>Position</dt><dd>Assistant Manager</dd></div>
+                <div><dt>Organization</dt><dd>K.J. & Associates, Chartered Accountants</dd></div>
+                <div><dt>Location</dt><dd>Nepal</dd></div>
+                <div><dt>Languages</dt><dd>English, Nepali</dd></div>
+              </dl>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="experience" data-panel="experience">
+          <div class="section-heading">
+            <p class="eyebrow">Experience</p>
+            <h2>Selected areas of professional exposure</h2>
+          </div>
+
+          <div class="timeline">
+            <article class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <p class="timeline-meta">2026 — Present</p>
+                <h3>Assistant Manager</h3>
+                <p>K.J. & Associates, Chartered Accountants</p>
+                <ul>
+                  <li>Internal audit planning, execution, reporting and follow-up.</li>
+                  <li>Financial reporting and standards-based technical review.</li>
+                  <li>Due diligence, valuation-related analysis and transaction support.</li>
+                  <li>Regulatory, compliance and internal-control review assignments.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <p class="timeline-meta">2023 — 2026</p>
+                <h3>Articleship Training</h3>
+                <p>K.J. & Associates, Chartered Accountants</p>
+                <ul>
+                  <li>Statutory and internal audits across multiple sectors.</li>
+                  <li>Audit documentation, sampling, substantive testing and analytical review.</li>
+                  <li>Financial statement review and reporting under applicable frameworks.</li>
+                  <li>Exposure to banking, insurance, microfinance, public entities and corporate clients.</li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="focus" data-panel="focus">
+          <div class="section-heading">
+            <p class="eyebrow">Professional Focus</p>
+            <h2>Areas of work and interest</h2>
+            <p class="section-intro">
+              The following describes professional exposure and areas of interest; it is not an advertisement or
+              solicitation for reserved professional services.
+            </p>
+          </div>
+
+          <div class="card-grid">
+            <article class="content-card icon-card">
+              <span class="card-icon">01</span>
+              <h3>Audit & Assurance</h3>
+              <p>Statutory audit, internal audit, audit planning, testing, documentation and reporting.</p>
+            </article>
+            <article class="content-card icon-card">
+              <span class="card-icon">02</span>
+              <h3>Internal Control</h3>
+              <p>Process review, control testing, risk identification and recommendation tracking.</p>
+            </article>
+            <article class="content-card icon-card">
+              <span class="card-icon">03</span>
+              <h3>Financial Reporting</h3>
+              <p>NFRS/NAS-focused review, financial statement analysis and technical accounting research.</p>
+            </article>
+            <article class="content-card icon-card">
+              <span class="card-icon">04</span>
+              <h3>Due Diligence</h3>
+              <p>Financial due diligence, merger-related analysis, review of financial information and working papers.</p>
+            </article>
+            <article class="content-card icon-card">
+              <span class="card-icon">05</span>
+              <h3>Valuation & Analysis</h3>
+              <p>Valuation-related assignments, financial modelling, ratio analysis and decision-support work.</p>
+            </article>
+            <article class="content-card icon-card">
+              <span class="card-icon">06</span>
+              <h3>Regulatory Research</h3>
+              <p>Structured research on accounting, audit, banking, tax and corporate regulatory requirements.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="qualifications" data-panel="qualifications">
+          <div class="section-heading">
+            <p class="eyebrow">Qualifications</p>
+            <h2>Education & professional training</h2>
+          </div>
+
+          <div class="qualification-grid">
+            <article class="content-card">
+              <span class="year-chip">2026</span>
+              <h3>Chartered Accountancy</h3>
+              <p>The Institute of Chartered Accountants of Nepal (ICAN)</p>
+            </article>
+            <article class="content-card">
+              <span class="year-chip">Ongoing / 2026</span>
+              <h3>Bachelor of Business Studies</h3>
+              <p>Business and management studies</p>
+            </article>
+            <article class="content-card">
+              <span class="year-chip">2026</span>
+              <h3>Advanced Management & Communication Skills</h3>
+              <p>ICAN — 29th Batch</p>
+            </article>
+            <article class="content-card">
+              <span class="year-chip">Training</span>
+              <h3>Information Technology Training</h3>
+              <p>Professional IT training completed through ICAN.</p>
+            </article>
+          </div>
+
+          <article class="content-card skills-card">
+            <h3>Software exposure</h3>
+            <div class="chip-list">
+              <span>Microsoft Excel</span><span>Word</span><span>PowerPoint</span><span>Tally</span>
+              <span>Finacle</span><span>Uranus</span><span>Swastik</span><span>Saral</span>
+            </div>
           </article>
-          <article class="timeline-item reveal" data-delay="80">
-            <div class="timeline-date">Aug 2023 — Aug 2026</div>
-            <div class="timeline-body"><h3>Articled Trainee</h3><p class="org">K.J. &amp; Associates, Chartered Accountants</p><p>Completed three years of practical training with exposure to audit, assurance, banking, microfinance, insurance, public-sector and corporate assignments.</p></div>
-          </article>
-        </div>
-        <div class="sector-panel reveal">
-          <div><span class="eyebrow">Assignment Exposure</span><h3>Sectors</h3></div>
-          <div class="tag-list" aria-label="Sector experience">
-            <span>Banking</span><span>Finance</span><span>Microfinance</span><span>Insurance</span><span>Capital Markets</span><span>Government</span><span>Hydropower</span><span>Cooperatives</span><span>Corporate</span>
+        </section>
+
+        <section class="tab-panel" id="insights" data-panel="insights">
+          <div class="section-heading">
+            <p class="eyebrow">Insights</p>
+            <h2>Professional notes & updates</h2>
+            <p class="section-intro">
+              This section is ready for short educational posts on accounting, audit, taxation, finance and regulatory
+              developments.
+            </p>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <section id="qualifications" class="section-pad section-ivory">
-      <div class="container qualification-layout">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Qualifications</p>
-          <h2>Education &amp; training</h2>
-        </div>
-        <div class="qualification-list">
-          <article class="qualification-item reveal"><div class="q-year">2026</div><div><h3>Chartered Accountancy — CAP III</h3><p>The Institute of Chartered Accountants of Nepal (ICAN)</p></div></article>
-          <article class="qualification-item reveal"><div class="q-year">2026</div><div><h3>Bachelor of Business Studies</h3><p>Tribhuvan University — expected completion 2026</p></div></article>
-          <article class="qualification-item reveal"><div class="q-year">2025</div><div><h3>Information Technology Training — 40 Hours</h3><p>Professional training</p></div></article>
-          <article class="qualification-item reveal"><div class="q-year">2023</div><div><h3>Information Technology Training — 60 Hours</h3><p>ICAN training</p></div></article>
-        </div>
-      </div>
-    </section>
+          <div class="card-grid">
+            <article class="content-card article-card">
+              <span class="article-tag">Accounting</span>
+              <h3>NFRS / NAS technical notes</h3>
+              <p>Add concise explainers on financial reporting topics, practical applications and standards updates.</p>
+              <span class="coming-soon">Content can be added without changing the layout.</span>
+            </article>
+            <article class="content-card article-card">
+              <span class="article-tag">Audit</span>
+              <h3>Audit & internal control</h3>
+              <p>Publish educational notes on controls, audit procedures, documentation and governance.</p>
+              <span class="coming-soon">Educational content only.</span>
+            </article>
+            <article class="content-card article-card">
+              <span class="article-tag">Regulatory</span>
+              <h3>Regulatory updates</h3>
+              <p>Summarise changes in applicable laws, directives and professional standards with source references.</p>
+              <span class="coming-soon">Keep posts factual and objective.</span>
+            </article>
+          </div>
+        </section>
 
-    <section id="insights" class="section-pad section-paper">
-      <div class="container">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Insights</p>
-          <h2>Professional topics</h2>
-          <p>Selected subject areas for future articles and professional updates.</p>
-        </div>
-        <div class="insight-track" role="list">
-          <article class="insight-card reveal" role="listitem"><span class="topic">NFRS / NAS</span><h3>Financial reporting and accounting</h3><p>Technical notes on presentation, recognition, measurement and disclosure matters.</p></article>
-          <article class="insight-card reveal" role="listitem"><span class="topic">Audit</span><h3>Audit &amp; internal controls</h3><p>Observations on audit methodology, control design and practical assurance work.</p></article>
-          <article class="insight-card reveal" role="listitem"><span class="topic">Banking</span><h3>Regulation &amp; compliance</h3><p>Professional updates involving banking, finance and regulatory requirements.</p></article>
-        </div>
-      </div>
-    </section>
+        <section class="tab-panel" id="contact" data-panel="contact">
+          <div class="section-heading">
+            <p class="eyebrow">Contact</p>
+            <h2>Professional contact</h2>
+          </div>
 
-    <section id="contact" class="contact section-pad">
-      <div class="container contact-grid">
-        <div class="section-heading section-heading-light reveal">
-          <p class="eyebrow">Contact</p>
-          <h2>Contact details</h2>
-          <p>Professional contact information.</p>
-        </div>
-        <div class="contact-card reveal" data-delay="80">
-          <a href="mailto:mail@carishabdahal.com.np"><span>Email</span><strong>mail@carishabdahal.com.np</strong></a>
-          <a href="mailto:rishab@kjassociates.com.np"><span>Work email</span><strong>rishab@kjassociates.com.np</strong></a>
-          <a href="tel:+9779802351674"><span>Mobile</span><strong>+977 980 235 1674</strong></a>
-          <a href="tel:+9779841846169"><span>Alternate</span><strong>+977 984 184 6169</strong></a>
-          <div class="contact-site"><span>Website</span><strong>carishabdahal.com.np</strong></div>
-        </div>
-      </div>
-    </section>
-  </main>
+          <div class="split-grid">
+            <article class="content-card">
+              <h3>Website</h3>
+              <p>carishabdahal.com.np</p>
+              <a class="text-link" href="https://carishabdahal.com.np/" target="_blank" rel="noopener">Open website ↗</a>
+            </article>
+            <article class="content-card">
+              <h3>Contact details</h3>
+              <p><a class="text-link" href="mailto:mail@carishabdahal.com.np">mail@carishabdahal.com.np</a></p>
+              <p><a class="text-link" href="mailto:rishab@kjassociates.com.np">rishab@kjassociates.com.np</a></p>
+              <p><a class="text-link" href="tel:+9779802351674">+977 980 235 1674</a></p>
+              <p><a class="text-link" href="tel:+9779841846169">+977 984 184 6169</a></p>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
 
-  <footer class="site-footer">
-    <div class="container footer-row">
-      <div><strong>CA. Rishab Dahal</strong><span>Chartered Accountant</span></div>
-      <p>Professional profile and informational content.</p>
-      <a href="#top" class="back-top" aria-label="Back to top">↑</a>
-    </div>
-  </footer>
+    <footer class="footer">
+      <span>© <span id="year"></span> CA. Rishab Dahal</span>
+      <span>Professional information only</span>
+    </footer>
+  </div>
 
   <script src="script.js"></script>
 </body>
