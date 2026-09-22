@@ -1,59 +1,30 @@
-const tabButtons = [...document.querySelectorAll(".tab-btn")];
-const tabPanels = [...document.querySelectorAll(".tab-panel")];
-const jumpButtons = [...document.querySelectorAll(".tab-jump, [data-tab-link]")];
-const menuToggle = document.getElementById("menuToggle");
-const tabs = document.getElementById("tabs");
+const header = document.querySelector('.site-header');
+const toggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('.nav');
+const year = document.getElementById('year');
 
-function validTab(name) {
-  return tabPanels.some(panel => panel.dataset.panel === name);
-}
+year.textContent = new Date().getFullYear();
 
-function activateTab(name, updateHash = true) {
-  const target = validTab(name) ? name : "home";
-
-  tabButtons.forEach(btn => {
-    const active = btn.dataset.tab === target;
-    btn.classList.toggle("active", active);
-    btn.setAttribute("aria-selected", active ? "true" : "false");
-  });
-
-  tabPanels.forEach(panel => {
-    const active = panel.dataset.panel === target;
-    panel.classList.toggle("active", active);
-    panel.setAttribute("aria-hidden", active ? "false" : "true");
-    if (active) panel.scrollTop = 0;
-  });
-
-  if (updateHash) {
-    history.replaceState(null, "", `#${target}`);
-  }
-
-  tabs.classList.remove("open");
-  menuToggle?.setAttribute("aria-expanded", "false");
-}
-
-tabButtons.forEach(btn => {
-  btn.addEventListener("click", () => activateTab(btn.dataset.tab));
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 10);
 });
 
-jumpButtons.forEach(control => {
-  control.addEventListener("click", event => {
-    const target = control.dataset.tab || control.dataset.tabLink;
-    if (target) {
-      event.preventDefault();
-      activateTab(target);
-    }
+toggle.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  toggle.setAttribute('aria-expanded', String(open));
+});
+
+nav.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    nav.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
   });
 });
 
-menuToggle?.addEventListener("click", () => {
-  const open = tabs.classList.toggle("open");
-  menuToggle.setAttribute("aria-expanded", String(open));
-});
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('show');
+  });
+}, { threshold: 0.12 });
 
-window.addEventListener("hashchange", () => {
-  activateTab(location.hash.replace("#", ""), false);
-});
-
-document.getElementById("year").textContent = new Date().getFullYear();
-activateTab(location.hash.replace("#", "") || "home", false);
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
