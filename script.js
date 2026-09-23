@@ -29,7 +29,7 @@ const desktopTools=()=>window.matchMedia('(min-width:801px)').matches;
 const setToolsMenu=open=>{navTools?.classList.toggle('menu-open',open);toolsToggle?.setAttribute('aria-expanded',String(open));};
 let toolsCloseTimer;
 const cancelToolsClose=()=>clearTimeout(toolsCloseTimer);
-const scheduleToolsClose=()=>{cancelToolsClose();toolsCloseTimer=setTimeout(()=>{if(desktopTools()&&!navTools?.contains(document.activeElement))setToolsMenu(false);},120);};
+const scheduleToolsClose=()=>{cancelToolsClose();toolsCloseTimer=setTimeout(()=>{if(desktopTools())setToolsMenu(false);},120);};
 toolsToggle?.addEventListener('click',event=>{event.stopPropagation();setToolsMenu(!navTools.classList.contains('menu-open'));});
 navTools?.addEventListener('pointerenter',event=>{if(desktopTools()&&event.pointerType!=='touch'){cancelToolsClose();setToolsMenu(true);}});
 navTools?.addEventListener('pointerleave',()=>{if(desktopTools())scheduleToolsClose();});
