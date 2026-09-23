@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://carishabdahal.com.np/</loc></url>
-</urlset>
+    <url><loc>https://carishabdahal.com.np/</loc></url>
+    <url><loc>https://carishabdahal.com.np/about/</loc></url>
+    <url><loc>https://carishabdahal.com.np/experience/</loc></url>
+    <url><loc>https://carishabdahal.com.np/expertise/</loc></url>
+    <url><loc>https://carishabdahal.com.np/insights/</loc></url>
+    <url><loc>https://carishabdahal.com.np/contact/</loc></url>
+  </urlset>
