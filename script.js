@@ -28,11 +28,12 @@ toggle?.addEventListener('click',()=>{const open=nav.classList.toggle('open');to
 const desktopTools=()=>window.matchMedia('(min-width:801px)').matches;
 const setToolsMenu=open=>{navTools?.classList.toggle('menu-open',open);toolsToggle?.setAttribute('aria-expanded',String(open));};
 let toolsCloseTimer;
+let openedByHover=false, clickedDuringHover=false;
 const cancelToolsClose=()=>clearTimeout(toolsCloseTimer);
 const scheduleToolsClose=()=>{cancelToolsClose();toolsCloseTimer=setTimeout(()=>{if(desktopTools())setToolsMenu(false);},120);};
-toolsToggle?.addEventListener('click',event=>{event.stopPropagation();setToolsMenu(!navTools.classList.contains('menu-open'));});
-navTools?.addEventListener('pointerenter',event=>{if(desktopTools()&&event.pointerType!=='touch'){cancelToolsClose();setToolsMenu(true);}});
-navTools?.addEventListener('pointerleave',()=>{if(desktopTools())scheduleToolsClose();});
+toolsToggle?.addEventListener('click',event=>{event.stopPropagation();if(desktopTools()&&openedByHover&&!clickedDuringHover){clickedDuringHover=true;setToolsMenu(true);}else setToolsMenu(!navTools.classList.contains('menu-open'));});
+navTools?.addEventListener('pointerenter',event=>{if(desktopTools()&&event.pointerType!=='touch'){cancelToolsClose();openedByHover=true;clickedDuringHover=false;setToolsMenu(true);}});
+navTools?.addEventListener('pointerleave',()=>{openedByHover=false;clickedDuringHover=false;if(desktopTools())scheduleToolsClose();});
 navTools?.addEventListener('focusin',()=>{cancelToolsClose();setToolsMenu(true);});
 navTools?.addEventListener('focusout',()=>{setTimeout(()=>{if(!navTools.contains(document.activeElement))setToolsMenu(false);},0);});
 document.addEventListener('click',event=>{if(navTools&&!navTools.contains(event.target))setToolsMenu(false);if(nav?.classList.contains('open')&&!siteHeader?.contains(event.target)){nav.classList.remove('open');toggle?.setAttribute('aria-expanded','false');}});
