@@ -2,22 +2,22 @@
 if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='/vendor/pdfjs-worker-3.11.174.min.js';
 
 const DOC_TOOLS=[
-  {group:'Organize PDFs',id:'merge',name:'Merge PDFs',description:'Combine complete PDF files in the order shown.',accept:'.pdf',multiple:true},
-  {group:'Organize PDFs',id:'split',name:'Split PDF',description:'Create individual PDF files for selected pages.',accept:'.pdf'},
-  {group:'Organize PDFs',id:'extract',name:'Extract pages',description:'Create a new PDF containing selected pages.',accept:'.pdf'},
-  {group:'Organize PDFs',id:'delete',name:'Delete pages',description:'Remove selected pages and keep the remainder.',accept:'.pdf'},
-  {group:'Organize PDFs',id:'reorder',name:'Reorder pages',description:'Build a PDF in the page order you enter.',accept:'.pdf'},
-  {group:'Organize PDFs',id:'rotate',name:'Rotate pages',description:'Rotate selected pages by 90, 180 or 270 degrees.',accept:'.pdf'},
-  {group:'Organize PDFs',id:'duplicate',name:'Duplicate pages',description:'Insert extra copies of selected pages.',accept:'.pdf'},
-  {group:'Organize PDFs',id:'combine',name:'Combine selected pages',description:'Combine chosen pages from multiple PDFs.',accept:'.pdf',multiple:true},
-  {group:'Convert to PDF',id:'image-to-pdf',name:'Image to PDF',description:'Arrange JPG, PNG or WebP images into one PDF.',accept:'image/jpeg,image/png,image/webp',multiple:true},
-  {group:'Convert to PDF',id:'word-to-pdf',name:'Word to PDF',description:'Preview and convert a modern DOCX file in the browser.',accept:'.docx'},
-  {group:'Convert to PDF',id:'text-to-pdf',name:'Text to PDF',description:'Turn plain text into a paginated PDF.',accept:'.txt'},
-  {group:'Convert to PDF',id:'html-to-pdf',name:'HTML to PDF',description:'Render an HTML file or pasted HTML to PDF.',accept:'.html,.htm,text/html'},
-  {group:'PDF to images',id:'pdf-to-jpg',name:'PDF to JPG',description:'Render every PDF page to an individual JPG.',accept:'.pdf'},
-  {group:'PDF to images',id:'pdf-to-png',name:'PDF to PNG',description:'Render every PDF page to an individual PNG.',accept:'.pdf'},
-  {group:'Compress',id:'pdf-compress',name:'PDF Compressor',description:'Rasterize and rebuild a PDF using selected quality and resolution.',accept:'.pdf'},
-  {group:'Compress',id:'image-compress',name:'Image Compressor',description:'Resize or recompress JPG, PNG and WebP images.',accept:'image/jpeg,image/png,image/webp',multiple:true}
+  {group:'Organize PDFs',id:'merge',slug:'merge-pdf',name:'Merge PDFs',description:'Combine complete PDF files in the order shown.',accept:'.pdf',multiple:true},
+  {group:'Organize PDFs',id:'split',slug:'split-pdf',name:'Split PDF',description:'Create individual PDF files for selected pages.',accept:'.pdf'},
+  {group:'Organize PDFs',id:'extract',slug:'extract-pdf-pages',name:'Extract pages',description:'Create a new PDF containing selected pages.',accept:'.pdf'},
+  {group:'Organize PDFs',id:'delete',slug:'delete-pdf-pages',name:'Delete pages',description:'Remove selected pages and keep the remainder.',accept:'.pdf'},
+  {group:'Organize PDFs',id:'reorder',slug:'reorder-pdf-pages',name:'Reorder pages',description:'Build a PDF in the page order you enter.',accept:'.pdf'},
+  {group:'Organize PDFs',id:'rotate',slug:'rotate-pdf',name:'Rotate pages',description:'Rotate selected pages by 90, 180 or 270 degrees.',accept:'.pdf'},
+  {group:'Organize PDFs',id:'duplicate',slug:'duplicate-pdf-pages',name:'Duplicate pages',description:'Insert extra copies of selected pages.',accept:'.pdf'},
+  {group:'Organize PDFs',id:'combine',slug:'combine-pdf-pages',name:'Combine selected pages',description:'Combine chosen pages from multiple PDFs.',accept:'.pdf',multiple:true},
+  {group:'Convert to PDF',id:'image-to-pdf',slug:'image-to-pdf',name:'Image to PDF',description:'Arrange JPG, PNG or WebP images into one PDF.',accept:'image/jpeg,image/png,image/webp',multiple:true},
+  {group:'Convert to PDF',id:'word-to-pdf',slug:'word-to-pdf',name:'Word to PDF',description:'Preview and convert a modern DOCX file in the browser.',accept:'.docx'},
+  {group:'Convert to PDF',id:'text-to-pdf',slug:'text-to-pdf',name:'Text to PDF',description:'Turn plain text into a paginated PDF.',accept:'.txt'},
+  {group:'Convert to PDF',id:'html-to-pdf',slug:'html-to-pdf',name:'HTML to PDF',description:'Render an HTML file or pasted HTML to PDF.',accept:'.html,.htm,text/html'},
+  {group:'PDF to images',id:'pdf-to-jpg',slug:'pdf-to-jpg',name:'PDF to JPG',description:'Render every PDF page to an individual JPG.',accept:'.pdf'},
+  {group:'PDF to images',id:'pdf-to-png',slug:'pdf-to-png',name:'PDF to PNG',description:'Render every PDF page to an individual PNG.',accept:'.pdf'},
+  {group:'Compress',id:'pdf-compress',slug:'compress-pdf',name:'PDF Compressor',description:'Rasterize and rebuild a PDF using selected quality and resolution.',accept:'.pdf'},
+  {group:'Compress',id:'image-compress',slug:'compress-image',name:'Image Compressor',description:'Resize or recompress JPG, PNG and WebP images.',accept:'image/jpeg,image/png,image/webp',multiple:true}
 ];
 
 const list=document.querySelector('#document-tool-list'),panel=document.querySelector('#document-panel');
@@ -27,8 +27,8 @@ const safeName=name=>name.replace(/[^a-z0-9._-]+/gi,'-').replace(/^-|-$/g,'')||'
 const pageTools=['split','extract','delete','reorder','rotate','duplicate'];
 
 function clearUrls(){state.urls.forEach(URL.revokeObjectURL);state.urls=[]}
-function setTool(id){clearUrls();state.tool=DOC_TOOLS.find(t=>t.id===id)||DOC_TOOLS[0];state.files=[];state.cancelled=false;state.docxReady=false;const url=new URL(location.href);url.searchParams.set('tool',state.tool.id);history.replaceState({},'',url);renderList();renderPanel()}
-function renderList(){list.querySelectorAll('button,[data-group]').forEach(x=>x.remove());let group='';for(const tool of DOC_TOOLS){if(group!==tool.group){group=tool.group;const heading=document.createElement('span');heading.dataset.group='';heading.className='resource-nav-label';heading.textContent=group;list.append(heading)}const button=document.createElement('button');button.type='button';button.className=tool.id===state.tool?.id?'active':'';button.textContent=tool.name;button.addEventListener('click',()=>setTool(tool.id));list.append(button)}}
+function setTool(id){clearUrls();state.tool=DOC_TOOLS.find(t=>t.id===id)||DOC_TOOLS[0];state.files=[];state.cancelled=false;state.docxReady=false;renderList();renderPanel()}
+function renderList(){list.querySelectorAll('a,[data-group]').forEach(x=>x.remove());let group='';for(const tool of DOC_TOOLS){if(group!==tool.group){group=tool.group;const heading=document.createElement('span');heading.dataset.group='';heading.className='resource-nav-label';heading.textContent=group;list.append(heading)}const link=document.createElement('a');link.href=`/pdf-tools/${tool.slug}/`;link.className=tool.id===state.tool?.id?'active':'';link.textContent=tool.name;if(tool.id===state.tool?.id)link.setAttribute('aria-current','page');list.append(link)}}
 
 function settingsMarkup(id){
   if(['split','extract','delete','reorder','rotate','duplicate','combine'].includes(id))return `<div class="settings-grid"><div class="field"><label for="pages">${id==='reorder'?'New page order':id==='combine'?'Selections by file':'Pages or ranges'}</label><input id="pages" value="${id==='combine'?'1:1-2, 2:1':'1-2, 4'}" placeholder="${id==='combine'?'1:1-2, 2:3':'1-3, 5'}"><small>${id==='combine'?'Use file number:pages. Example 1:1-2, 2:4':'Use commas and ranges. Example: 1-3, 5.'}</small></div>${id==='rotate'?'<div class="field"><label for="angle">Rotation</label><select id="angle"><option>90</option><option>180</option><option>270</option></select></div>':''}</div>`;
@@ -118,4 +118,4 @@ async function compressImages(){
 }
 function numVal(selector,fallback=0){const value=Number(panel.querySelector(selector)?.value);return Number.isFinite(value)?value:fallback}
 
-setTool(new URL(location.href).searchParams.get('tool')||'merge');
+setTool(document.body.dataset.documentTool||new URL(location.href).searchParams.get('tool')||'merge');
