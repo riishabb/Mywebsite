@@ -552,4 +552,4 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   .page-hero h1,.compact-page-hero h1{font-size:clamp(34px,10vw,52px)}
   .tool-hero h1,.tool-shell>.tool-hero h1{font-size:clamp(32px,9vw,44px)}
 }
-@media(max-height:650px) and (min-width:901px){.tools-menu{max-height:calc(100dvh - 72px);overflow-y:auto}}
+@media(max-height:800px) and (min-width:901px){.tools-menu{max-height:calc(100dvh - 72px);overflow-y:auto}}
