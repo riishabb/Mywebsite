@@ -97,3 +97,32 @@ const observer = 'IntersectionObserver' in window
     }), {threshold:.12})
   : null;
 document.querySelectorAll('.reveal').forEach(element => observer ? observer.observe(element) : element.classList.add('show'));
+
+
+// Give direct tool visitors a compact route to other tools in the same category.
+const toolGroups = {"nfrs":[["Lease Calculator","/tools/lease-calculator/"],["Effective Interest Rate","/tools/eir-calculator/"],["EPS Calculator","/tools/eps-calculator/"],["Borrowing Cost","/tools/borrowing-cost-calculator/"],["Defined Benefit Estimate","/tools/defined-benefit-calculator/"]],"calculation":[["EMI Calculator","/tools/emi-calculator/"],["Simple Interest","/tools/simple-interest-calculator/"],["Compound Interest","/tools/compound-interest-calculator/"],["Present Value","/tools/present-value-calculator/"],["Future Value","/tools/future-value-calculator/"],["NPV & IRR","/tools/npv-irr-calculator/"],["Loan Comparison","/tools/loan-comparison-calculator/"],["Flat vs Reducing Rate","/tools/flat-vs-reducing-calculator/"],["Break-even Point","/tools/break-even-calculator/"],["Depreciation","/tools/depreciation-calculator/"],["Financial Ratios","/tools/financial-ratio-calculator/"]],"decision":[["Lease Identification","/tools/decision-tools/lease-identification/"],["Financial Asset Classification","/tools/decision-tools/financial-asset-classification/"],["Impairment Indicators","/tools/decision-tools/impairment-indicators/"],["Provision Assessment","/tools/decision-tools/provision-assessment/"],["Subsequent Events","/tools/decision-tools/subsequent-events/"],["Related Party","/tools/decision-tools/related-party/"],["Control Assessment","/tools/decision-tools/control-assessment/"],["Principal versus Agent","/tools/decision-tools/principal-agent/"]]};
+const activeToolGroup = toolGroups[currentResource];
+const toolHeading = document.querySelector('.tool-shell > .tool-hero');
+if (toolHeading && activeToolGroup) {
+  const switcher = document.createElement('nav');
+  switcher.className = 'tool-switch';
+  switcher.setAttribute('aria-label', 'Other tools in this category');
+  const label = document.createElement('label');
+  label.textContent = 'Switch tool';
+  const select = document.createElement('select');
+  select.id = 'category-tool-switch';
+  label.htmlFor = select.id;
+  for (const [name, href] of activeToolGroup) {
+    const option = document.createElement('option');
+    option.value = href;
+    option.textContent = name;
+    option.selected = href === path;
+    select.append(option);
+  }
+  const currentToolListed = [...select.options].some(option => option.value === path);
+  if (currentToolListed) {
+    select.addEventListener('change', () => { window.location.href = select.value; });
+    switcher.append(label, select);
+    toolHeading.after(switcher);
+  }
+}
