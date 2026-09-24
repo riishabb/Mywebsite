@@ -237,3 +237,7 @@ body.document-area{--paper:var(--document-bg);--tint:#e7e3e1;--accent:var(--docu
   .document-area .category-intro{padding-top:24px}
 }
 @media print{.tool-switch{display:none!important}}
+
+/* Decision controls lead; explanation follows the start action. */
+.decision-area .assessment-workbook{margin-top:0}
+.decision-area .assessment-intro{margin-top:22px}
