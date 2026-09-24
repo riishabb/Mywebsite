@@ -18,7 +18,7 @@ const resourceGroups = [
     links: [['EMI Calculator','/tools/emi-calculator/'],['Simple Interest','/tools/simple-interest-calculator/'],['Compound Interest','/tools/compound-interest-calculator/'],['Present Value','/tools/present-value-calculator/'],['Future Value','/tools/future-value-calculator/'],['NPV & IRR','/tools/npv-irr-calculator/'],['Loan Comparison','/tools/loan-comparison-calculator/'],['Flat vs Reducing Rate','/tools/flat-vs-reducing-calculator/'],['Break-even Point','/tools/break-even-calculator/'],['Depreciation','/tools/depreciation-calculator/'],['Financial Ratios','/tools/financial-ratio-calculator/']]
   },
   {
-    key: 'decision', label: 'NFRS Decision-Making', href: '/decision-tools/',
+    key: 'decision', label: 'NFRS Decision-Making Tools', href: '/decision-tools/',
     links: [['Lease Identification','/tools/decision-tools/lease-identification/'],['Financial Asset Classification','/tools/decision-tools/financial-asset-classification/'],['Impairment Indicators','/tools/decision-tools/impairment-indicators/'],['Provision Assessment','/tools/decision-tools/provision-assessment/'],['Subsequent Events','/tools/decision-tools/subsequent-events/'],['Related Party','/tools/decision-tools/related-party/'],['Control Assessment','/tools/decision-tools/control-assessment/'],['Principal versus Agent','/tools/decision-tools/principal-agent/']]
   },
   {
@@ -41,8 +41,9 @@ const linkMarkup = ([label, href, key], current) =>
   `<a class="${key === current ? 'active' : ''}" href="${href}" ${key === current ? 'aria-current="page"' : ''}>${label}</a>`;
 
 const toolMenuMarkup = resourceGroups.map(group => `<section class="tools-menu-group">
+  <button class="tools-group-toggle" type="button" aria-expanded="false" aria-controls="tools-group-${group.key}">${group.label}<span aria-hidden="true">+</span></button>
   <a class="tools-menu-heading ${group.key === currentResource ? 'active' : ''}" href="${group.href}" ${group.key === currentResource ? 'aria-current="page"' : ''}>${group.label}<span aria-hidden="true">→</span></a>
-  <div class="tools-menu-links">${group.links.map(([name, href]) => `<a href="${href}">${name}</a>`).join('')}</div>
+  <div class="tools-menu-links" id="tools-group-${group.key}"><a class="tools-group-all" href="${group.href}">View all ${group.label}</a>${group.links.map(([name, href]) => `<a href="${href}">${name}</a>`).join('')}</div>
 </section>`).join('');
 
 const header = document.querySelector('[data-site-header]');
@@ -72,11 +73,22 @@ const menuToggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('.navigation-wrap');
 const navTools = document.querySelector('.nav-tools');
 const toolsToggle = document.querySelector('.tools-toggle');
+const desktopMenu = () => window.matchMedia('(min-width: 901px)').matches;
+let suppressToolsFocus = false;
+const openTools = () => {
+  navTools?.classList.add('menu-open');
+  toolsToggle?.setAttribute('aria-expanded', 'true');
+};
 
 const closeTools = (returnFocus = false) => {
   navTools?.classList.remove('menu-open');
+  navTools?.classList.remove('clicked-open');
   toolsToggle?.setAttribute('aria-expanded', 'false');
-  if (returnFocus) toolsToggle?.focus();
+  if (returnFocus) {
+    suppressToolsFocus = true;
+    toolsToggle?.focus();
+    requestAnimationFrame(() => { suppressToolsFocus = false; });
+  }
 };
 
 const closeMenu = () => {
@@ -91,12 +103,37 @@ menuToggle?.addEventListener('click', () => {
 });
 
 toolsToggle?.addEventListener('click', () => {
-  const open = navTools.classList.toggle('menu-open');
-  toolsToggle.setAttribute('aria-expanded', String(open));
+  if (desktopMenu() && !navTools.classList.contains('clicked-open')) {
+    navTools.classList.add('clicked-open');
+    openTools();
+  } else if (navTools.classList.contains('menu-open')) closeTools();
+  else openTools();
 });
+navTools?.addEventListener('pointerenter', event => {
+  if (desktopMenu() && event.pointerType !== 'touch') openTools();
+});
+navTools?.addEventListener('pointerleave', () => {
+  if (desktopMenu()) closeTools();
+});
+navTools?.addEventListener('focusin', () => { if (desktopMenu() && !suppressToolsFocus) openTools(); });
+navTools?.addEventListener('focusout', event => {
+  if (!navTools.contains(event.relatedTarget)) closeTools();
+});
+document.querySelectorAll('.tools-group-toggle').forEach(button => button.addEventListener('click', () => {
+  const expanded = button.getAttribute('aria-expanded') === 'true';
+  document.querySelectorAll('.tools-group-toggle').forEach(other => {
+    other.setAttribute('aria-expanded', 'false');
+    other.closest('.tools-menu-group').classList.remove('group-open');
+  });
+  if (!expanded) {
+    button.setAttribute('aria-expanded', 'true');
+    button.closest('.tools-menu-group').classList.add('group-open');
+  }
+}));
 
 document.addEventListener('click', event => {
   if (!siteHeader?.contains(event.target)) closeMenu();
+  else if (desktopMenu() && !navTools?.contains(event.target)) closeTools();
 });
 
 document.addEventListener('keydown', event => {
@@ -109,7 +146,7 @@ document.addEventListener('keydown', event => {
 });
 
 navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-window.addEventListener('resize', () => { if (window.innerWidth > 900) navigation?.classList.remove('open'); });
+window.addEventListener('resize', () => { closeTools(); if (desktopMenu()) navigation?.classList.remove('open'); });
 window.addEventListener('scroll', () => siteHeader?.classList.toggle('scrolled', window.scrollY > 8), {passive:true});
 
 const observer = 'IntersectionObserver' in window
