@@ -241,3 +241,8 @@ body.document-area{--paper:var(--document-bg);--tint:#e7e3e1;--accent:var(--docu
 /* Decision controls lead; explanation follows the start action. */
 .decision-area .assessment-workbook{margin-top:0}
 .decision-area .assessment-intro{margin-top:22px}
+
+/* Keep the start action above the guidance while cached tool scripts refresh. */
+.decision-area [data-tool]{display:flex;flex-direction:column}
+.decision-area [data-tool] > .assessment-workbook{order:0;width:100%}
+.decision-area [data-tool] > .assessment-intro{order:1;width:100%}
