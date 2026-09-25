@@ -1,36 +1,186 @@
 const path = window.location.pathname;
-const links = [['Home', '/', 'home'], ['About', '/about/', 'about'], ['Experience', '/experience/', 'experience'], ['Expertise', '/expertise/', 'expertise'], ['Insights', '/insights/', 'insights'], ['Tools', '/tools/', 'tools'], ['Contact', '/contact/', 'contact']];
-const current = path === '/' || path.endsWith('/index.html') ? 'home' : links.find(([, , key]) => path.includes(`/${key}`))?.[2];
+
+const primaryLinks = [
+  ['Home', '/', 'home'],
+  ['About', '/about/', 'about'],
+  ['Experience', '/experience-expertise/', 'experience-expertise'],
+  ['Insights', '/insights/', 'insights'],
+  ['Contact', '/contact/', 'contact']
+];
+
+const resourceGroups = [
+  {
+    key: 'nfrs', label: 'NFRS Tools', href: '/nfrs-tools/',
+    links: [['Lease Calculator','/tools/lease-calculator/'],['Effective Interest Rate','/tools/eir-calculator/'],['EPS Calculator','/tools/eps-calculator/'],['Borrowing Cost','/tools/borrowing-cost-calculator/'],['Defined Benefit Estimate','/tools/defined-benefit-calculator/']]
+  },
+  {
+    key: 'calculation', label: 'Calculation Tools', href: '/calculation-tools/',
+    links: [['EMI Calculator','/tools/emi-calculator/'],['Simple Interest','/tools/simple-interest-calculator/'],['Compound Interest','/tools/compound-interest-calculator/'],['Present Value','/tools/present-value-calculator/'],['Future Value','/tools/future-value-calculator/'],['NPV & IRR','/tools/npv-irr-calculator/'],['Loan Comparison','/tools/loan-comparison-calculator/'],['Flat vs Reducing Rate','/tools/flat-vs-reducing-calculator/'],['Break-even Point','/tools/break-even-calculator/'],['Depreciation','/tools/depreciation-calculator/'],['Financial Ratios','/tools/financial-ratio-calculator/']]
+  },
+  {
+    key: 'decision', label: 'NFRS Decision-Making Tools', href: '/decision-tools/',
+    links: [['Lease Identification','/tools/decision-tools/lease-identification/'],['Financial Asset Classification','/tools/decision-tools/financial-asset-classification/'],['Impairment Indicators','/tools/decision-tools/impairment-indicators/'],['Provision Assessment','/tools/decision-tools/provision-assessment/'],['Subsequent Events','/tools/decision-tools/subsequent-events/'],['Related Party','/tools/decision-tools/related-party/'],['Control Assessment','/tools/decision-tools/control-assessment/'],['Principal versus Agent','/tools/decision-tools/principal-agent/']]
+  },
+  {
+    key: 'pdf', label: 'PDF & Document Tools', href: '/pdf-tools/',
+    links: [['Merge & organize PDFs','/pdf-tools/?tool=merge'],['Convert files to PDF','/pdf-tools/?tool=image-to-pdf'],['PDF to JPG or PNG','/pdf-tools/?tool=pdf-to-jpg'],['Compress PDF or images','/pdf-tools/?tool=pdf-compress']]
+  }
+];
+
+const currentPrimary = path === '/' || path === '/index.html'
+  ? 'home'
+  : primaryLinks.find(([, href]) => href !== '/' && path.startsWith(href))?.[2];
+
+const currentResource = path.startsWith('/pdf-tools/') ? 'pdf'
+  : path.startsWith('/decision-tools/') || path.includes('/decision-tools/') ? 'decision'
+  : path.startsWith('/calculation-tools/') || /\/tools\/(emi|simple-interest|compound-interest|present-value|future-value|npv-irr|loan-comparison|flat-vs-reducing|break-even|depreciation|financial-ratio)-/.test(path) ? 'calculation'
+  : path.startsWith('/nfrs-tools/') || /\/tools\/(lease|eir|eps|borrowing-cost|defined-benefit)-/.test(path) ? 'nfrs'
+  : null;
+
+const linkMarkup = ([label, href, key], current) =>
+  `<a class="${key === current ? 'active' : ''}" href="${href}" ${key === current ? 'aria-current="page"' : ''}>${label}</a>`;
+
+const toolMenuMarkup = resourceGroups.map(group => `<section class="tools-menu-group">
+  <button class="tools-group-toggle" type="button" aria-expanded="false" aria-controls="tools-group-${group.key}">${group.label}<span aria-hidden="true">+</span></button>
+  <a class="tools-menu-heading ${group.key === currentResource ? 'active' : ''}" href="${group.href}" ${group.key === currentResource ? 'aria-current="page"' : ''}>${group.label}<span aria-hidden="true">→</span></a>
+  <div class="tools-menu-links" id="tools-group-${group.key}"><a class="tools-group-all" href="${group.href}">View all ${group.label}</a>${group.links.map(([name, href]) => `<a href="${href}">${name}</a>`).join('')}</div>
+</section>`).join('');
+
 const header = document.querySelector('[data-site-header]');
-const navigation = links.map(([label, href, key]) => key === 'tools'
-  ? `<div class="nav-dropdown"><button class="nav-tools-toggle ${key === current ? 'active' : ''}" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="tools-menu">${label}<span class="nav-caret" aria-hidden="true">⌄</span></button><div class="tools-menu" id="tools-menu" role="menu"><a href="/tools/" role="menuitem">All tools<span>↗</span></a><a href="/tools/decision-tools/lease-identification/" role="menuitem">Decision tools<span>↗</span></a><a href="/tools/emi-calculator/" role="menuitem">Calculator tools<span>↗</span></a></div></div>`
-  : `<a class="${key === current ? 'active' : ''}" href="${href}" ${key === current ? 'aria-current="page"' : ''}>${label}</a>`).join('');
-if (header) header.innerHTML = `<header class="site-header"><a class="brand" href="/"><span class="brand-mark">RD</span><span>CA. Rishab Dahal</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">Menu</button><nav class="nav" id="primary-navigation" aria-label="Primary navigation">${navigation}</nav></header>`;
+if (header) {
+  header.innerHTML = `<header class="site-header">
+    <div class="header-primary">
+      <a class="brand" href="/" aria-label="CA. Rishab Dahal home"><span class="brand-mark" aria-hidden="true">RD</span><span>CA. Rishab Dahal</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu</button>
+      <nav class="navigation-wrap" id="site-navigation" aria-label="Primary navigation">
+        <div class="nav">${primaryLinks.slice(0,4).map(link => linkMarkup(link, currentPrimary)).join('')}
+          <div class="nav-tools">
+            <button class="tools-toggle ${currentResource ? 'active' : ''}" type="button" aria-expanded="false" aria-controls="tools-menu">Tools <span class="tools-chevron" aria-hidden="true"></span></button>
+            <div class="tools-menu" id="tools-menu"><div class="tools-menu-grid">${toolMenuMarkup}</div></div>
+          </div>
+          ${linkMarkup(primaryLinks[4], currentPrimary)}
+        </div>
+      </nav>
+    </div>
+  </header>`;
+}
+
 const footer = document.querySelector('[data-site-footer]');
-if (footer) footer.innerHTML = `<footer class="site-footer"><p>© <span id="year">${new Date().getFullYear()}</span> Rishab Dahal · Chartered Accountant, Nepal</p><p class="disclaimer">Factual professional profile and educational information. Nothing on this website constitutes solicitation, an assurance engagement, or a guarantee of professional outcome.</p></footer>`;
+if (footer) footer.innerHTML = `<footer class="site-footer"><p>© ${new Date().getFullYear()} Rishab Dahal · Chartered Accountant, Nepal</p><p class="disclaimer">Individual professional profile and educational information. Tool outputs are indicative and do not replace the applicable standards, laws or engagement-specific advice.</p></footer>`;
+
 const siteHeader = document.querySelector('.site-header');
-const toggle = document.querySelector('.menu-toggle');
-const nav = document.querySelector('.nav');
-const toolsDropdown = document.querySelector('.nav-dropdown');
-const toolsToggle = document.querySelector('.nav-tools-toggle');
-const toolsMenu = document.querySelector('.tools-menu');
-const closeTools = () => { toolsDropdown?.classList.remove('menu-open'); toolsToggle?.setAttribute('aria-expanded', 'false'); };
-const openTools = () => { toolsDropdown?.classList.add('menu-open'); toolsToggle?.setAttribute('aria-expanded', 'true'); };
-toggle?.addEventListener('click', () => { const open = nav.classList.toggle('open'); toggle.setAttribute('aria-expanded', String(open)); });
-toolsToggle?.addEventListener('click', event => { event.stopPropagation(); toolsDropdown?.classList.contains('menu-open') ? closeTools() : openTools(); });
-toolsDropdown?.addEventListener('pointerenter', openTools);
-toolsDropdown?.addEventListener('pointerleave', closeTools);
-toolsToggle?.addEventListener('keydown', event => {
-  if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openTools(); toolsMenu?.querySelector('a')?.focus(); }
-  if (event.key === 'Escape') closeTools();
+const menuToggle = document.querySelector('.menu-toggle');
+const navigation = document.querySelector('.navigation-wrap');
+const navTools = document.querySelector('.nav-tools');
+const toolsToggle = document.querySelector('.tools-toggle');
+const desktopMenu = () => window.matchMedia('(min-width: 901px)').matches;
+let suppressToolsFocus = false;
+const openTools = () => {
+  navTools?.classList.add('menu-open');
+  toolsToggle?.setAttribute('aria-expanded', 'true');
+};
+
+const closeTools = (returnFocus = false) => {
+  navTools?.classList.remove('menu-open');
+  navTools?.classList.remove('clicked-open');
+  toolsToggle?.setAttribute('aria-expanded', 'false');
+  if (returnFocus) {
+    suppressToolsFocus = true;
+    toolsToggle?.focus();
+    requestAnimationFrame(() => { suppressToolsFocus = false; });
+  }
+};
+
+const closeMenu = () => {
+  navigation?.classList.remove('open');
+  menuToggle?.setAttribute('aria-expanded', 'false');
+  closeTools();
+};
+
+menuToggle?.addEventListener('click', () => {
+  const open = navigation.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', String(open));
 });
-toolsMenu?.addEventListener('keydown', event => { if (event.key === 'Escape') { closeTools(); toolsToggle?.focus(); } });
-nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { nav.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); closeTools(); }));
-document.addEventListener('pointerdown', event => { if (toolsDropdown && !toolsDropdown.contains(event.target)) closeTools(); });
-document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeTools(); nav?.classList.remove('open'); toggle?.setAttribute('aria-expanded', 'false'); } });
+
+toolsToggle?.addEventListener('click', () => {
+  if (desktopMenu() && !navTools.classList.contains('clicked-open')) {
+    navTools.classList.add('clicked-open');
+    openTools();
+  } else if (navTools.classList.contains('menu-open')) closeTools();
+  else openTools();
+});
+navTools?.addEventListener('pointerenter', event => {
+  if (desktopMenu() && event.pointerType !== 'touch') openTools();
+});
+navTools?.addEventListener('pointerleave', () => {
+  if (desktopMenu()) closeTools();
+});
+navTools?.addEventListener('focusin', () => { if (desktopMenu() && !suppressToolsFocus) openTools(); });
+navTools?.addEventListener('focusout', event => {
+  if (!navTools.contains(event.relatedTarget)) closeTools();
+});
+document.querySelectorAll('.tools-group-toggle').forEach(button => button.addEventListener('click', () => {
+  const expanded = button.getAttribute('aria-expanded') === 'true';
+  document.querySelectorAll('.tools-group-toggle').forEach(other => {
+    other.setAttribute('aria-expanded', 'false');
+    other.closest('.tools-menu-group').classList.remove('group-open');
+  });
+  if (!expanded) {
+    button.setAttribute('aria-expanded', 'true');
+    button.closest('.tools-menu-group').classList.add('group-open');
+  }
+}));
+
+document.addEventListener('click', event => {
+  if (!siteHeader?.contains(event.target)) closeMenu();
+  else if (desktopMenu() && !navTools?.contains(event.target)) closeTools();
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  if (navTools?.classList.contains('menu-open')) closeTools(true);
+  else if (navigation?.classList.contains('open')) {
+    closeMenu();
+    menuToggle?.focus();
+  }
+});
+
+navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+window.addEventListener('resize', () => { closeTools(); if (desktopMenu()) navigation?.classList.remove('open'); });
 window.addEventListener('scroll', () => siteHeader?.classList.toggle('scrolled', window.scrollY > 8), {passive:true});
-document.querySelectorAll('a[href]').forEach(link => {
-  if (link.origin === window.location.origin && !link.hash && !link.target) link.addEventListener('click', event => { event.preventDefault(); document.body.classList.add('is-leaving'); setTimeout(() => { window.location.href = link.href; }, 180); });
-});
-const observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('show'); observer.unobserve(entry.target); } }), {threshold:.12}) : null;
+
+const observer = 'IntersectionObserver' in window
+  ? new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+        observer.unobserve(entry.target);
+      }
+    }), {threshold:.12})
+  : null;
 document.querySelectorAll('.reveal').forEach(element => observer ? observer.observe(element) : element.classList.add('show'));
+
+// Give direct tool visitors a compact route to other tools in the same category.
+const activeToolGroup = resourceGroups.find(group => group.key === currentResource)?.links;
+const toolHeading = document.querySelector('.tool-shell > .tool-hero');
+if (toolHeading && activeToolGroup) {
+  const switcher = document.createElement('nav');
+  switcher.className = 'tool-switch';
+  switcher.setAttribute('aria-label', 'Other tools in this category');
+  const label = document.createElement('label');
+  label.textContent = 'Switch tool';
+  const select = document.createElement('select');
+  select.id = 'category-tool-switch';
+  label.htmlFor = select.id;
+  for (const [name, href] of activeToolGroup) {
+    const option = document.createElement('option');
+    option.value = href;
+    option.textContent = name;
+    option.selected = href === path;
+    select.append(option);
+  }
+  if ([...select.options].some(option => option.value === path)) {
+    select.addEventListener('change', () => { window.location.href = select.value; });
+    switcher.append(label, select);
+    toolHeading.after(switcher);
+  }
+}
