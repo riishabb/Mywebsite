@@ -661,3 +661,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){
   .tools-menu,.tool-card,.resource-directory .tool-card{transition:none!important}
 }
+
+@media(min-width:901px){
+  .nav-tools.menu-open .tools-menu,.nav-tools.menu-open:hover .tools-menu{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transform:translate(-50%,0)!important
+  }
+}
