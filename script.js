@@ -55,8 +55,8 @@ if (header) {
       <nav class="navigation-wrap" id="site-navigation" aria-label="Primary navigation">
         <div class="nav">${primaryLinks.slice(0,4).map(link => linkMarkup(link, currentPrimary)).join('')}
           <div class="nav-tools">
-            <button class="tools-toggle ${currentResource ? 'active' : ''}" type="button" aria-expanded="false" aria-controls="tools-menu">Tools <span class="tools-chevron" aria-hidden="true"></span></button>
-            <div class="tools-menu" id="tools-menu"><div class="tools-menu-grid">${toolMenuMarkup}</div></div>
+            <button class="tools-toggle ${currentResource ? 'active' : ''}" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="tools-menu">Tools <span class="tools-chevron" aria-hidden="true"></span></button>
+            <div class="tools-menu" id="tools-menu" aria-label="Tools navigation"><div class="tools-menu-grid">${toolMenuMarkup}</div></div>
           </div>
           ${linkMarkup(primaryLinks[4], currentPrimary)}
         </div>
@@ -73,14 +73,22 @@ const menuToggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('.navigation-wrap');
 const navTools = document.querySelector('.nav-tools');
 const toolsToggle = document.querySelector('.tools-toggle');
+const toolsMenu = document.querySelector('.tools-menu');
 const desktopMenu = () => window.matchMedia('(min-width: 901px)').matches;
 let suppressToolsFocus = false;
+let toolsCloseTimer;
+const cancelToolsClose = () => {
+  window.clearTimeout(toolsCloseTimer);
+  toolsCloseTimer = undefined;
+};
 const openTools = () => {
+  cancelToolsClose();
   navTools?.classList.add('menu-open');
   toolsToggle?.setAttribute('aria-expanded', 'true');
 };
 
 const closeTools = (returnFocus = false) => {
+  cancelToolsClose();
   navTools?.classList.remove('menu-open');
   navTools?.classList.remove('clicked-open');
   toolsToggle?.setAttribute('aria-expanded', 'false');
@@ -89,6 +97,14 @@ const closeTools = (returnFocus = false) => {
     toolsToggle?.focus();
     requestAnimationFrame(() => { suppressToolsFocus = false; });
   }
+};
+
+// A brief intent window protects the short trip from the trigger to the wide
+// desktop panel. It is long enough for natural diagonal movement, but short
+// enough that leaving the navigation still feels immediate.
+const scheduleToolsClose = () => {
+  cancelToolsClose();
+  toolsCloseTimer = window.setTimeout(() => closeTools(), 180);
 };
 
 const closeMenu = () => {
@@ -102,7 +118,8 @@ menuToggle?.addEventListener('click', () => {
   menuToggle.setAttribute('aria-expanded', String(open));
 });
 
-toolsToggle?.addEventListener('click', () => {
+toolsToggle?.addEventListener('click', event => {
+  event.stopPropagation();
   if (desktopMenu() && !navTools.classList.contains('clicked-open')) {
     navTools.classList.add('clicked-open');
     openTools();
@@ -112,12 +129,24 @@ toolsToggle?.addEventListener('click', () => {
 navTools?.addEventListener('pointerenter', event => {
   if (desktopMenu() && event.pointerType !== 'touch') openTools();
 });
-navTools?.addEventListener('pointerleave', () => {
-  if (desktopMenu()) closeTools();
+navTools?.addEventListener('pointerleave', event => {
+  if (desktopMenu() && !navTools.contains(event.relatedTarget)) scheduleToolsClose();
+});
+toolsMenu?.addEventListener('pointerenter', cancelToolsClose);
+toolsMenu?.addEventListener('pointerleave', event => {
+  if (desktopMenu() && !navTools?.contains(event.relatedTarget)) scheduleToolsClose();
 });
 navTools?.addEventListener('focusin', () => { if (desktopMenu() && !suppressToolsFocus) openTools(); });
 navTools?.addEventListener('focusout', event => {
   if (!navTools.contains(event.relatedTarget)) closeTools();
+});
+toolsToggle?.addEventListener('keydown', event => {
+  if (!desktopMenu() || !['ArrowDown', 'ArrowUp'].includes(event.key)) return;
+  event.preventDefault();
+  openTools();
+  const links = toolsMenu?.querySelectorAll('a');
+  const target = event.key === 'ArrowUp' ? links?.[links.length - 1] : links?.[0];
+  target?.focus();
 });
 document.querySelectorAll('.tools-group-toggle').forEach(button => button.addEventListener('click', () => {
   const expanded = button.getAttribute('aria-expanded') === 'true';
