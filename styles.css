@@ -670,3 +670,7 @@ body.nfrs-area,body.calculation-area,body.decision-area,body.document-area{--lin
   .document-tool-list{position:static}
 }
 @media(prefers-reduced-motion:reduce){.tools-menu,.tool-card{transition:none!important}}
+
+/* Portrait dimensions follow the editorial column rather than HTML height attributes. */
+.home-intro{align-items:start}
+.profile-photo img{height:auto;aspect-ratio:4/4.5;object-fit:cover}
