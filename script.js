@@ -118,12 +118,14 @@ menuToggle?.addEventListener('click', () => {
   menuToggle.setAttribute('aria-expanded', String(open));
 });
 
+let toolsOpenBeforePointer = false;
+toolsToggle?.addEventListener('pointerdown', () => {
+  toolsOpenBeforePointer = navTools.classList.contains('menu-open');
+});
 toolsToggle?.addEventListener('click', event => {
   event.stopPropagation();
-  if (desktopMenu() && !navTools.classList.contains('clicked-open')) {
-    navTools.classList.add('clicked-open');
-    openTools();
-  } else if (navTools.classList.contains('menu-open')) closeTools();
+  const wasOpen = event.detail ? toolsOpenBeforePointer : navTools.classList.contains('menu-open');
+  if (wasOpen) closeTools();
   else openTools();
 });
 navTools?.addEventListener('pointerenter', event => {
@@ -144,7 +146,7 @@ toolsToggle?.addEventListener('keydown', event => {
   if (!desktopMenu() || !['ArrowDown', 'ArrowUp'].includes(event.key)) return;
   event.preventDefault();
   openTools();
-  const links = toolsMenu?.querySelectorAll('a');
+  const links = [...(toolsMenu?.querySelectorAll('a') || [])].filter(link => link.getClientRects().length > 0);
   const target = event.key === 'ArrowUp' ? links?.[links.length - 1] : links?.[0];
   target?.focus();
 });
@@ -175,18 +177,8 @@ document.addEventListener('keydown', event => {
 });
 
 navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-window.addEventListener('resize', () => { closeTools(); if (desktopMenu()) navigation?.classList.remove('open'); });
+window.addEventListener('resize', closeMenu);
 window.addEventListener('scroll', () => siteHeader?.classList.toggle('scrolled', window.scrollY > 8), {passive:true});
-
-const observer = 'IntersectionObserver' in window
-  ? new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('show');
-        observer.unobserve(entry.target);
-      }
-    }), {threshold:.12})
-  : null;
-document.querySelectorAll('.reveal').forEach(element => observer ? observer.observe(element) : element.classList.add('show'));
 
 // Give direct tool visitors a compact route to other tools in the same category.
 const activeToolGroup = resourceGroups.find(group => group.key === currentResource)?.links;
@@ -215,60 +207,5 @@ if (toolHeading && activeToolGroup) {
 }
 
 
-// Editorial motion layer: only enhances pages that opt into the chapter system.
-(() => {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const editorialHome = document.querySelector('.editorial-home');
-  const revealTargets = document.querySelectorAll(
-    '.chapter > *:not(.chapter-index), .page-hero > *, .section > *'
-  );
-
-  revealTargets.forEach((element, index) => {
-    element.setAttribute('data-reveal', '');
-    element.style.transitionDelay = reducedMotion ? '0ms' : `${Math.min(index % 4, 3) * 45}ms`;
-  });
-
-  if (!reducedMotion && 'IntersectionObserver' in window) {
-    const revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        revealObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -7% 0px' });
-    revealTargets.forEach(element => revealObserver.observe(element));
-  } else {
-    revealTargets.forEach(element => element.classList.add('is-visible'));
-  }
-
-  if (!editorialHome || reducedMotion) return;
-  document.body.classList.add('has-scroll-motion');
-
-  let ticking = false;
-  const updateCoverMotion = () => {
-    const cover = document.querySelector('.cover');
-    if (!cover) return;
-    const rect = cover.getBoundingClientRect();
-    const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, 1)));
-    document.documentElement.style.setProperty('--scroll-p', progress.toFixed(3));
-    ticking = false;
-  };
-
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(updateCoverMotion);
-  }, { passive: true });
-  updateCoverMotion();
-
-  const chapterNodes = [...document.querySelectorAll('[data-chapter]')];
-  if ('IntersectionObserver' in window && chapterNodes.length) {
-    const chapterObserver = new IntersectionObserver(entries => {
-      const visible = entries
-        .filter(entry => entry.isIntersecting)
-        .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) document.body.dataset.chapter = visible.target.dataset.chapter;
-    }, { threshold: [0.2, 0.45, 0.7] });
-    chapterNodes.forEach(node => chapterObserver.observe(node));
-  }
-})();
+// The opening is the only automatic entrance. Reading sections remain still.
+// CSS respects reduced motion; no content is hidden pending JavaScript.
