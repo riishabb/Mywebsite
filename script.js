@@ -213,3 +213,62 @@ if (toolHeading && activeToolGroup) {
     toolHeading.after(switcher);
   }
 }
+
+
+// Editorial motion layer: only enhances pages that opt into the chapter system.
+(() => {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const editorialHome = document.querySelector('.editorial-home');
+  const revealTargets = document.querySelectorAll(
+    '.chapter > *:not(.chapter-index), .page-hero > *, .section > *'
+  );
+
+  revealTargets.forEach((element, index) => {
+    element.setAttribute('data-reveal', '');
+    element.style.transitionDelay = reducedMotion ? '0ms' : `${Math.min(index % 4, 3) * 45}ms`;
+  });
+
+  if (!reducedMotion && 'IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -7% 0px' });
+    revealTargets.forEach(element => revealObserver.observe(element));
+  } else {
+    revealTargets.forEach(element => element.classList.add('is-visible'));
+  }
+
+  if (!editorialHome || reducedMotion) return;
+  document.body.classList.add('has-scroll-motion');
+
+  let ticking = false;
+  const updateCoverMotion = () => {
+    const cover = document.querySelector('.cover');
+    if (!cover) return;
+    const rect = cover.getBoundingClientRect();
+    const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, 1)));
+    document.documentElement.style.setProperty('--scroll-p', progress.toFixed(3));
+    ticking = false;
+  };
+
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(updateCoverMotion);
+  }, { passive: true });
+  updateCoverMotion();
+
+  const chapterNodes = [...document.querySelectorAll('[data-chapter]')];
+  if ('IntersectionObserver' in window && chapterNodes.length) {
+    const chapterObserver = new IntersectionObserver(entries => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) document.body.dataset.chapter = visible.target.dataset.chapter;
+    }, { threshold: [0.2, 0.45, 0.7] });
+    chapterNodes.forEach(node => chapterObserver.observe(node));
+  }
+})();
