@@ -918,19 +918,19 @@ main{overflow:visible}
    Headings introduce, groups stay together, sequences follow document order. */
 :root{
  --motion-ease:cubic-bezier(.2,.7,.2,1);
- --motion-duration:480ms;
- --motion-heading-duration:550ms;
- --motion-brief-duration:350ms;
- --motion-distance:12px;
- --motion-heading-distance:16px;
- --motion-brief-distance:8px;
- --motion-stagger:50ms;
- --motion-stagger-cap:200ms;
+ --motion-duration:620ms;
+ --motion-heading-duration:720ms;
+ --motion-brief-duration:450ms;
+ --motion-distance:22px;
+ --motion-heading-distance:28px;
+ --motion-brief-distance:16px;
+ --motion-stagger:70ms;
+ --motion-stagger-cap:250ms;
 }
 /* Keep native anchor destinations clear of the sticky navigation. */
 main[id],main [id]{scroll-margin-top:84px}
 @keyframes editorial-enter{
- from{opacity:.72;transform:translateY(var(--motion-distance))}
+ from{opacity:.3;transform:translateY(var(--motion-distance))}
  to{opacity:1;transform:translateY(0)}
 }
 @media(prefers-reduced-motion:no-preference){
@@ -941,7 +941,7 @@ main[id],main [id]{scroll-margin-top:84px}
  [data-motion]:focus-within{animation:none!important;transform:none!important;opacity:1!important}
 }
 @media(max-width:600px){
- :root{--motion-duration:380ms;--motion-heading-duration:420ms;--motion-distance:8px;--motion-heading-distance:10px;--motion-stagger:35ms;--motion-stagger-cap:100ms}
+ :root{--motion-duration:480ms;--motion-heading-duration:550ms;--motion-brief-duration:380ms;--motion-distance:14px;--motion-heading-distance:18px;--motion-brief-distance:10px;--motion-stagger:50ms;--motion-stagger-cap:150ms}
 }
 @media(prefers-reduced-motion:reduce){
  [data-motion],.cover-title{animation:none!important;transform:none!important;opacity:1!important;clip-path:none!important}
@@ -949,3 +949,16 @@ main[id],main [id]{scroll-margin-top:84px}
 @media print{
  [data-motion],.cover-title{animation:none!important;transform:none!important;opacity:1!important}
 }
+
+/* A single supporting rule follows each row, without moving its grid or border. */
+@keyframes editorial-rule{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes editorial-accent{from{opacity:.25;transform:translateY(8px)}to{opacity:1;transform:none}}
+[data-motion="sequence"]{position:relative}
+@media(prefers-reduced-motion:no-preference){
+ [data-motion="sequence"].motion-enter::after{content:"";position:absolute;inset:0 0 auto;height:1px;background:currentColor;opacity:.35;transform-origin:left;animation:editorial-rule 650ms var(--motion-ease) var(--motion-delay,0ms) both;pointer-events:none}
+ .education-timeline [data-motion="sequence"].motion-enter::after,.timeline [data-motion="sequence"].motion-enter::after{content:none}
+ .motion-accent{animation:editorial-accent 500ms var(--motion-ease) both}
+}
+.matrix-row:is(:hover,:focus-visible) strong,.resource-index a:is(:hover,:focus-visible) strong{transform:translateX(4px)}
+.thinking-list a strong,.article-card h2 a,.text-link,.index-link{transition:text-decoration-color 180ms ease,color 180ms ease}
+.thinking-list a:is(:hover,:focus-visible) strong,.article-card:focus-within h2 a,.article-card:hover h2 a,.text-link:is(:hover,:focus-visible),.index-link:is(:hover,:focus-visible){text-decoration:underline;text-decoration-color:var(--ed-accent);text-underline-offset:5px}

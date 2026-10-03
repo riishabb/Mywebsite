@@ -214,6 +214,11 @@ if (toolHeading && activeToolGroup) {
   if (!items.length) return;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const completed = new WeakSet();
+  const sequenceOrder = new Map();
+  items.filter(item => item.dataset.motion === 'sequence').forEach(item => {
+    const siblings = items.filter(other => other.parentElement === item.parentElement && other.dataset.motion === 'sequence');
+    sequenceOrder.set(item, siblings.indexOf(item));
+  });
   let observer;
 
   const finish = element => {
@@ -225,6 +230,7 @@ if (toolHeading && activeToolGroup) {
   const finishAll = () => {
     items.forEach(finish);
     observer?.disconnect();
+    document.querySelectorAll('.motion-accent').forEach(accent => accent.classList.remove('motion-accent'));
   };
   const expose = target => {
     if (!(target instanceof Element)) return;
@@ -239,6 +245,14 @@ if (toolHeading && activeToolGroup) {
     if (completed.has(element)) return;
     completed.add(element);
     if (reduced.matches || element.contains(document.activeElement)) return finish(element);
+    observer?.unobserve(element);
+    if (element.dataset.motion === 'heading') {
+      const accent = element.closest('.chapter')?.querySelector('.chapter-index');
+      if (accent) {
+        accent.classList.add('motion-accent');
+        accent.addEventListener('animationend', () => accent.classList.remove('motion-accent'), {once:true});
+      }
+    }
     if (element.dataset.motion === 'sequence') {
       element.style.setProperty('--motion-delay', `calc(min(${order} * var(--motion-stagger), var(--motion-stagger-cap)))`);
     }
@@ -272,21 +286,17 @@ if (toolHeading && activeToolGroup) {
   if (reduced.matches || !('IntersectionObserver' in window)) return finishAll();
 
   observer = new IntersectionObserver(entries => {
-    const groups = new Map();
-    // Document order is the editorial order, even if callback order differs.
-    entries.filter(entry => entry.isIntersecting && !completed.has(entry.target)).sort((a, b) => items.indexOf(a.target) - items.indexOf(b.target)).forEach(({target}) => {
-      const group = target.parentElement;
-      const order = groups.get(group) || 0;
-      enter(target, order);
-      if (target.dataset.motion === 'sequence') groups.set(group, order + 1);
-    });
-  }, {threshold: 0, rootMargin: '0px 0px -24px 0px'});
+    // Stable sibling positions keep a sequence deliberate during both slow and fast scroll.
+    entries.filter(entry => entry.isIntersecting && !completed.has(entry.target))
+      .sort((a, b) => items.indexOf(a.target) - items.indexOf(b.target))
+      .forEach(({target}) => enter(target, sequenceOrder.get(target) || 0));
+  }, {threshold: 0, rootMargin: '0px 0px -36px 0px'});
 
-  // No stagger on the first viewport, and no wait for the observer's first tick.
+  // Initial compositions enter immediately, using the same capped sequence.
   items.forEach(item => {
     if (completed.has(item)) return;
     const bounds = item.getBoundingClientRect();
-    if (bounds.top < innerHeight && bounds.bottom > 0) enter(item);
+    if (bounds.top < innerHeight && bounds.bottom > 0) enter(item, sequenceOrder.get(item) || 0);
     else observer.observe(item);
   });
 })();
