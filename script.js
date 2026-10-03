@@ -207,5 +207,86 @@ if (toolHeading && activeToolGroup) {
 }
 
 
-// The opening is the only automatic entrance. Reading sections remain still.
-// CSS respects reduced motion; no content is hidden pending JavaScript.
+// Editorial entrances are opt-in in the HTML. Pending content stays fully visible:
+// failed JS, browser search and keyboard access never depend on an observer.
+(() => {
+  const items = [...document.querySelectorAll('[data-motion]')];
+  if (!items.length) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const completed = new WeakSet();
+  let observer;
+
+  const finish = element => {
+    completed.add(element);
+    element.classList.remove('motion-enter');
+    element.style.removeProperty('--motion-delay');
+    observer?.unobserve(element);
+  };
+  const finishAll = () => {
+    items.forEach(finish);
+    observer?.disconnect();
+  };
+  const expose = target => {
+    if (!(target instanceof Element)) return;
+    items.filter(item => item === target || item.contains(target) || target.contains(item)).forEach(finish);
+  };
+  const exposeAnchor = () => {
+    if (!location.hash) return;
+    try { expose(document.getElementById(decodeURIComponent(location.hash.slice(1)))); }
+    catch { /* Malformed fragments must not interrupt the controller. */ }
+  };
+  const enter = (element, order = 0) => {
+    if (completed.has(element)) return;
+    completed.add(element);
+    if (reduced.matches || element.contains(document.activeElement)) return finish(element);
+    if (element.dataset.motion === 'sequence') {
+      element.style.setProperty('--motion-delay', `calc(min(${order} * var(--motion-stagger), var(--motion-stagger-cap)))`);
+    }
+    element.classList.add('motion-enter');
+    element.addEventListener('animationend', () => finish(element), {once: true});
+    element.addEventListener('animationcancel', () => finish(element), {once: true});
+  };
+
+  document.addEventListener('focusin', event => expose(event.target));
+  document.addEventListener('beforematch', event => expose(event.target));
+  document.addEventListener('keydown', event => {
+    if (((event.ctrlKey || event.metaKey) && ['f', 'g'].includes(event.key.toLowerCase())) || event.key === 'F3') finishAll();
+  });
+  document.addEventListener('click', event => {
+    const link = event.target.closest?.('a[href]');
+    if (!link) return;
+    const url = new URL(link.href, location.href);
+    if (url.origin === location.origin && url.pathname === location.pathname && url.hash) {
+      try { expose(document.getElementById(decodeURIComponent(url.hash.slice(1)))); } catch {}
+    }
+  });
+  window.addEventListener('hashchange', exposeAnchor);
+  // A restored reading position should never replay an entrance over the reader.
+  window.addEventListener('popstate', finishAll);
+  window.addEventListener('pageshow', event => {
+    if (event.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') finishAll();
+    else exposeAnchor();
+  });
+  reduced.addEventListener('change', event => { if (event.matches) finishAll(); });
+  exposeAnchor();
+  if (reduced.matches || !('IntersectionObserver' in window)) return finishAll();
+
+  observer = new IntersectionObserver(entries => {
+    const groups = new Map();
+    // Document order is the editorial order, even if callback order differs.
+    entries.filter(entry => entry.isIntersecting && !completed.has(entry.target)).sort((a, b) => items.indexOf(a.target) - items.indexOf(b.target)).forEach(({target}) => {
+      const group = target.parentElement;
+      const order = groups.get(group) || 0;
+      enter(target, order);
+      if (target.dataset.motion === 'sequence') groups.set(group, order + 1);
+    });
+  }, {threshold: 0, rootMargin: '0px 0px -24px 0px'});
+
+  // No stagger on the first viewport, and no wait for the observer's first tick.
+  items.forEach(item => {
+    if (completed.has(item)) return;
+    const bounds = item.getBoundingClientRect();
+    if (bounds.top < innerHeight && bounds.bottom > 0) enter(item);
+    else observer.observe(item);
+  });
+})();
