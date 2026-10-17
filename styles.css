@@ -974,3 +974,19 @@ main[id],main [id]{scroll-margin-top:84px}
 .emi-key-principal{background:var(--color-primary)}.emi-key-interest{background:var(--color-accent)}
 .emi-legend strong,.emi-legend small{display:block}.emi-legend strong{font-size:15px;color:var(--ink)}.emi-legend small{font-size:11px;color:var(--muted)}
 @media(max-width:480px){.emi-breakdown-body{gap:16px}.emi-pie{width:108px}.emi-legend strong{font-size:13px}}
+
+/* PDF-to-Office review: source beside editable content, stacked on small screens. */
+.office-preview{display:grid;grid-template-columns:minmax(140px, .65fr) minmax(0, 1.35fr);gap:1.25rem;margin-top:1rem;align-items:start}
+.office-preview figure{margin:0;position:sticky;top:6rem}
+.office-preview img{width:100%;height:auto;border:1px solid var(--color-border,#ccd4d1)}
+.office-preview figcaption{font-size:.8rem;margin-top:.5rem}
+.office-edit-wrap{overflow:auto;max-height:70vh;min-width:0}
+.office-edit-wrap>textarea{width:100%;min-height:24rem;white-space:pre-wrap}
+.office-grid{border-collapse:collapse;width:100%}
+.office-grid caption{text-align:left;margin-bottom:.5rem;font-size:.85rem}
+.office-grid td{padding:0;border:1px solid var(--color-border,#ccd4d1);vertical-align:top}
+.office-grid textarea{display:block;border:0;border-radius:0;min-width:8rem;width:100%;resize:vertical;padding:.5rem;background:var(--color-surface,#fff);color:inherit;font:inherit;font-size:.85rem}
+.office-grid textarea:focus{outline:2px solid currentColor;outline-offset:-2px}
+#office-status:not(:empty),#office-page-note{margin:1rem 0;font-size:.9rem}
+#office-download:not(:empty){margin:1rem 0}
+@media(max-width:760px){.office-preview{grid-template-columns:1fr}.office-preview figure{position:static;max-width:320px}.office-edit-wrap{max-height:65vh}}

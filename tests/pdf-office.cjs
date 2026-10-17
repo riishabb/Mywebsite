@@ -1,0 +1,51 @@
+/* Run with node tests/pdf-office.cjs. Uses the site's vendored dependencies. */
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const os=require('node:os');
+const path=require('node:path');
+const core=require('../pdf-office-core');
+const Zip=require('../vendor/jszip-3.10.1.min.js');
+const pdfjs=require('../vendor/pdfjs-3.11.174.min.js');
+const {jsPDF}=require('../vendor/jspdf-2.5.1.umd.min.js');
+pdfjs.GlobalWorkerOptions.workerSrc=path.resolve(__dirname,'../vendor/pdfjs-worker-3.11.174.min.js');
+const context={pdfjsLib:pdfjs,window:{},console};vm.createContext(context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../pdf-office.js'),'utf8')+'\nglobalThis.converter=OfficeConverter;',context);
+const converter=context.converter;
+(async()=>{
+  const pdf=new jsPDF({unit:'pt',format:'a4'});pdf.setFontSize(11);
+  [['Item','Reference','Amount'],['Paper & ink','00123','1,250.00'],['Services','INV-02','(500.00)']].forEach((row,i)=>row.forEach((s,c)=>pdf.text(s,[30,260,410][c],40+i*25)));
+  pdf.addPage();
+  const loaded=await pdfjs.getDocument({data:new Uint8Array(pdf.output('arraybuffer')),disableFontFace:true}).promise;
+  const page=await loaded.getPage(1),words=converter.nativeWords(await page.getTextContent(),page.getViewport({scale:1}));
+  const lines=core.linesFromWords(words),table=core.tableFromLines(lines,595);
+  assert.deepEqual(table.rows,[['Item','Reference','Amount'],['Paper & ink','00123','1,250.00'],['Services','INV-02','(500.00)']]);
+  const blank=await loaded.getPage(2);assert.equal(converter.nativeWords(await blank.getTextContent(),blank.getViewport({scale:1})).length,0);
+  assert.deepEqual(core.tableFromLines(lines,595,[40,65]).rows,table.rows);
+  const headerOnly=core.linesFromWords([{text:'Single paragraph',x:20,y:20,w:200,h:11}]);assert.equal(core.tableFromLines(headerOnly,595).rows[0].length,1);
+  assert.equal(core.numberValue('00123'),null);assert.equal(core.numberValue('1,250.00'),1250);assert.equal(core.numberValue('(500.00)'),-500);
+  for(const s of ['1/2/2026','01.00','=SUM(A1:A2)','1234567890123456','12,34','10%',''])assert.equal(core.numberValue(s),null);
+  assert.equal(core.colName(26),'AA');assert.equal(core.colName(701),'ZZ');
+  const ocr=converter.ocrWords({blocks:[{paragraphs:[{lines:[{words:[{text:'Scanned',bbox:{x0:60,y0:60,x1:180,y1:90},confidence:95}]}]}]}]},3);
+  assert.equal(ocr[0].text,'Scanned');assert.equal(ocr[0].x,20);assert.equal(ocr[0].h,10);
+  const pages=[{number:1,width:595,height:842,lines,rows:table.rows},{number:2,width:842,height:595,lines:[],rows:[['नेपाल <&> "test"\u0001'],['=SUM(A1:A2)']]}];
+  const out=fs.mkdtempSync(path.join(os.tmpdir(),'pdf-office-'));
+  fs.writeFileSync(path.join(out,'converted.xlsx'),await core.xlsx(Zip,pages,true,'nodebuffer'));
+  fs.writeFileSync(path.join(out,'text-only.xlsx'),await core.xlsx(Zip,pages,false,'nodebuffer'));
+  fs.writeFileSync(path.join(out,'converted.docx'),await core.docx(Zip,pages,'nodebuffer'));
+  const zip=await Zip.loadAsync(fs.readFileSync(path.join(out,'converted.xlsx')));
+  const sheet=await zip.file('xl/worksheets/sheet1.xml').async('string');assert.ok(sheet.includes('<v>1250</v>'));assert.ok(!sheet.includes('<f>'));
+  await loaded.destroy();console.log('PASS: real PDF extraction, columns, OCR coordinates, numeric handling and Office generation.');console.log('OUTPUT_DIR='+out);
+})().catch(e=>{console.error(e);process.exitCode=1});
+// Cancellation must settle even when the OCR worker never resolves a job.
+(async()=>{
+  let started,terminated=false,destroyed=false;const ready=new Promise(r=>{started=r});
+  const values={'office-columns':'','office-source':'ocr','office-language':'eng','office-pages':'','office-gap':'12'};
+  const mockWorker={recognize:()=>{started();return new Promise(()=>{})},terminate:async()=>{terminated=true}};
+  const mockPage={getViewport:({scale})=>({width:595*scale,height:842*scale,scale}),getTextContent:async()=>({items:[]}),render:()=>({promise:Promise.resolve()}),cleanup(){}};
+  const mockPdf={numPages:1,getPage:async()=>mockPage,destroy:async()=>{destroyed=true}};
+  const c={window:{Tesseract:{}},Tesseract:{createWorker:async()=>mockWorker},state:{files:[{file:{size:10,name:'scan.pdf',arrayBuffer:async()=>new ArrayBuffer(10)}}],cancelled:false},panel:{querySelector:id=>({value:values[id.slice(1)],textContent:''})},document:{createElement:()=>({getContext:()=>({})})},pdfjsLib:{getDocument:()=>({promise:Promise.resolve(mockPdf)})},clearUrls(){},parsePages(){},checkCancelled(){if(c.state.cancelled)throw Error('Operation cancelled.')},progress(){},console};
+  vm.createContext(c);vm.runInContext(fs.readFileSync(path.join(__dirname,'../pdf-office.js'),'utf8')+';globalThis.converter=OfficeConverter',c);
+  const pending=c.converter.convert('pdf-to-word');await ready;c.state.cancelled=true;await c.converter.cancel();
+  await assert.rejects(pending,/cancelled/);assert.ok(terminated);assert.ok(destroyed);console.log('PASS: cancellation settles pending OCR and releases worker/PDF resources.');
+})().catch(e=>{console.error(e);process.exitCode=1});

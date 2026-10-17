@@ -23,7 +23,7 @@ const resourceGroups = [
   },
   {
     key: 'pdf', label: 'PDF & Document Tools', href: '/pdf-tools/',
-    links: [['Merge & organize PDFs','/pdf-tools/?tool=merge'],['Convert files to PDF','/pdf-tools/?tool=image-to-pdf'],['PDF to JPG or PNG','/pdf-tools/?tool=pdf-to-jpg'],['Compress PDF or images','/pdf-tools/?tool=pdf-compress']]
+    links: [['Merge & organize PDFs','/pdf-tools/?tool=merge'],['Convert files to PDF','/pdf-tools/?tool=image-to-pdf'],['PDF to Word','/pdf-tools/?tool=pdf-to-word'],['PDF to Excel','/pdf-tools/?tool=pdf-to-excel'],['PDF to JPG or PNG','/pdf-tools/?tool=pdf-to-jpg'],['Compress PDF or images','/pdf-tools/?tool=pdf-compress']]
   }
 ];
 
