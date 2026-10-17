@@ -15,7 +15,7 @@ const resourceGroups = [
   },
   {
     key: 'calculation', label: 'Calculation Tools', href: '/calculation-tools/',
-    links: [['EMI Calculator','/tools/emi-calculator/'],['Simple Interest','/tools/simple-interest-calculator/'],['Compound Interest','/tools/compound-interest-calculator/'],['Present Value','/tools/present-value-calculator/'],['Future Value','/tools/future-value-calculator/'],['NPV & IRR','/tools/npv-irr-calculator/'],['Loan Comparison','/tools/loan-comparison-calculator/'],['Flat vs Reducing Rate','/tools/flat-vs-reducing-calculator/'],['Break-even Point','/tools/break-even-calculator/'],['Depreciation','/tools/depreciation-calculator/'],['Financial Ratios','/tools/financial-ratio-calculator/']]
+    links: [['Salary Tax Calculator','/tools/salary-tax-calculator/'],['EMI Calculator','/tools/emi-calculator/'],['Simple Interest','/tools/simple-interest-calculator/'],['Compound Interest','/tools/compound-interest-calculator/'],['Present Value','/tools/present-value-calculator/'],['Future Value','/tools/future-value-calculator/'],['NPV & IRR','/tools/npv-irr-calculator/'],['Loan Comparison','/tools/loan-comparison-calculator/'],['Flat vs Reducing Rate','/tools/flat-vs-reducing-calculator/'],['Break-even Point','/tools/break-even-calculator/'],['Depreciation','/tools/depreciation-calculator/'],['Financial Ratios','/tools/financial-ratio-calculator/']]
   },
   {
     key: 'decision', label: 'NFRS Decision-Making Tools', href: '/decision-tools/',
@@ -33,7 +33,7 @@ const currentPrimary = path === '/' || path === '/index.html'
 
 const currentResource = path.startsWith('/pdf-tools/') ? 'pdf'
   : path.startsWith('/decision-tools/') || path.includes('/decision-tools/') ? 'decision'
-  : path.startsWith('/calculation-tools/') || /\/tools\/(emi|simple-interest|compound-interest|present-value|future-value|npv-irr|loan-comparison|flat-vs-reducing|break-even|depreciation|financial-ratio)-/.test(path) ? 'calculation'
+  : path.startsWith('/calculation-tools/') || /\/tools\/(salary-tax|emi|simple-interest|compound-interest|present-value|future-value|npv-irr|loan-comparison|flat-vs-reducing|break-even|depreciation|financial-ratio)-/.test(path) ? 'calculation'
   : path.startsWith('/nfrs-tools/') || /\/tools\/(lease|eir|eps|borrowing-cost|defined-benefit)-/.test(path) ? 'nfrs'
   : null;
 
